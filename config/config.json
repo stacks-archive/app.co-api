@@ -17,10 +17,8 @@
     "migrations-path": "./db/migrations"
   },
   "production": {
-    "username": null,
-    "password": null,
+    "use_env_variable": "DATABASE_URL",
     "database": "app_co_production",
-    "host": "127.0.0.1",
     "dialect": "postgres",
     "migrations-path": "./db/migrations"
   }
