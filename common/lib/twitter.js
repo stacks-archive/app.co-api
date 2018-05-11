@@ -1,13 +1,14 @@
 const Twitter = require('twitter');
 const each = require('async/each');
 const URL = require('url');
+const getBearerToken = require('get-twitter-bearer-token');
+
 const { Ranking } = require('../../db/models');
 
 const twitter = new Twitter({
   consumer_key: process.env.TWITTER_KEY,
   consumer_secret: process.env.TWITTER_SECRET,
-  access_token_key: process.env.TWITTER_TOKEN_KEY,
-  access_token_secret: process.env.TWITTER_TOKEN_SECRET,
+  bearer_token: process.env.TWITTER_BEARER_TOKEN,
 });
 
 const fetchPage = async function fetchPage(app, _options, _lastCount, _totalMentions, _lastId) {
@@ -89,8 +90,21 @@ const fetchMentions = (apps) =>
     });
   });
 
+const bearerToken = () =>
+  new Promise(async (resolve, reject) => {
+    getBearerToken(process.env.TWITTER_KEY, process.env.TWITTER_SECRET, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res.body.access_token);
+      }
+    });
+  });
+
 module.exports = {
   fetchMentions,
   paginateMentions,
   saveRanking,
+  client: twitter,
+  bearerToken,
 };
