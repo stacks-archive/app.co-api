@@ -12,7 +12,7 @@ const twitter = new Twitter({
 });
 
 const fetchPage = async function fetchPage(app, _options, _lastCount, _totalMentions, _lastId) {
-  let [lastId, lastCount, totalMentions] = [_lastCount, _totalMentions, _lastId];
+  let [lastCount, totalMentions, lastId] = [_lastCount, _totalMentions, _lastId];
   const options = _options;
   return new Promise(async (resolve, reject) => {
     if (lastId) {
