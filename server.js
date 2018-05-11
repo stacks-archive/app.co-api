@@ -6,7 +6,6 @@ const { App } = require('./db/models');
 const { saveRanking } = require('./common/lib/twitter');
 
 const port = parseInt(process.env.PORT, 10) || 4000;
-const dev = process.env.NODE_ENV !== 'production';
 
 const app = express();
 
@@ -30,7 +29,7 @@ app.post('/api/fetch_rankings', async (req, res) => {
 app.get('/api/apps', async (req, res) => {
   const apps = await App.findAllWithRankings();
   res.json(apps);
-})
+});
 
 app.listen(port, (err) => {
   if (err) throw err;

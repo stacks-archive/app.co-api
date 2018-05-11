@@ -41,7 +41,7 @@ const paginateMentions = (app) =>
 
     if (app.website && app.website.length > 0) {
       const { hostname } = URL.parse(app.website);
-      const options = { q: hostname, count: 100 };
+      const options = { q: encodeURIComponent(hostname), count: 100 };
       try {
         while (lastCount === 100) {
           /* eslint no-await-in-loop: [0] */
