@@ -41,6 +41,9 @@ const paginateMentions = (app) =>
 
     if (app.website && app.website.length > 0) {
       const { hostname } = URL.parse(app.website);
+      if (!hostname || hostname.length === 0) {
+        return resolve(totalMentions);
+      }
       const options = { q: encodeURIComponent(hostname), count: 100 };
       try {
         while (lastCount === 100) {
