@@ -64,15 +64,16 @@ const saveRanking = (app) =>
   new Promise(async (resolve, reject) => {
     try {
       const totalMentions = await paginateMentions(app);
-      const [ranking] = await Ranking.findOrCreate({
-        where: {
-          appId: app.id,
-          date: new Date(),
-        },
-        defaults: {
-          twitterMentions: totalMentions,
-        },
+      const attributes = {
+        appId: app.id,
+        date: new Date(),
+      };
+      let [ranking] = await Ranking.findOrBuild({
+        where: attributes,
+        defaults: attributes,
       });
+      attributes.twitterMentions = totalMentions;
+      ranking = await ranking.update(attributes);
       resolve(ranking);
     } catch (error) {
       reject(error);

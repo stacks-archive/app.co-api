@@ -12,7 +12,7 @@ dotenv.config();
 beforeEach(async () => {
   await sequelize.sync();
   await App.truncate({ cascade: true });
-  // Ranking.truncate({ cascade: true });
+  await Ranking.truncate({ cascade: true });
 });
 
 const makeApp = async function makeApp(name = 'Cryptokitties', website = 'https://cryptokitties.co') {
