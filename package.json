@@ -66,7 +66,6 @@
     "url": "git+ssh://git@github.com/blockstackpbc/app.co.git"
   },
   "scripts": {
-    "build": "next build",
     "db:create": "sequelize db:create",
     "db:migrate": "sequelize db:migrate",
     "dev": "node server.js",
@@ -74,7 +73,8 @@
     "lint:fix": "eslint \"./**/*.js\" --fix",
     "start": "NODE_ENV=production node server.js",
     "test": "VCR_MODE=cache NODE_ENV=test jest",
-    "test-watch": "VCR_MODE=cache NODE_ENV=test jest --watch"
+    "test-watch": "VCR_MODE=cache NODE_ENV=test jest --watch",
+    "repl": "node --experimental-repl-await"
   },
   "jest": {
     "globals": {

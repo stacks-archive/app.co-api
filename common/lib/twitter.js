@@ -64,7 +64,7 @@ const saveRanking = (app) =>
   new Promise(async (resolve, reject) => {
     try {
       const totalMentions = await paginateMentions(app);
-      const [ranking] = await Ranking.findOrBuild({
+      const [ranking] = await Ranking.findOrCreate({
         where: {
           appId: app.id,
           date: new Date(),
