@@ -1,5 +1,7 @@
 const { google } = require('googleapis');
 const _ = require('lodash');
+const cheerio = require('cheerio');
+const request = require('request-promise');
 
 const { App } = require('../../db/models');
 
@@ -82,6 +84,18 @@ module.exports = class Importer {
       } catch (error) {
         reject(error);
       }
+    });
+  }
+
+  static getImageURL(url) {
+    return new Promise(async (resolve) => {
+      if (url.indexOf('photos.app.goo') !== -1) {
+        const response = await request(url);
+        const $ = cheerio.load(response);
+        const meta = $('meta[property="og:image"]');
+        resolve(meta.attr('content'));
+      }
+      resolve(url);
     });
   }
 };

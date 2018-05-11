@@ -36,3 +36,12 @@ test.skip(
   },
   15000,
 );
+
+describe('getImageURL', () => {
+  test('it can fetch the right image from google apps', async () => {
+    const googleUrl = 'https://photos.app.goo.gl/0LSINllTFGbqhggp2';
+
+    const url = await Importer.getImageURL(googleUrl);
+    expect(url).toMatch('https://lh3.googleusercontent.com/');
+  });
+});
