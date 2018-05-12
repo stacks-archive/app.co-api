@@ -5,7 +5,7 @@ const request = require('request-promise');
 
 const { App } = require('../../db/models');
 
-module.exports = class Importer {
+module.exports = class GSheets {
   static auth() {
     const oauthClient = new google.auth.OAuth2(process.env.GOOGLE_OAUTH_CLIENT_ID, process.env.GOOGLE_OAUTH_SECRET);
     oauthClient.setCredentials({
