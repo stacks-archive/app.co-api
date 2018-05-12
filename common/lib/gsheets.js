@@ -62,6 +62,7 @@ module.exports = class GSheets {
       'Registration Open?': 'registrationIsOpen',
       Description: 'description',
       Image: 'imageUrl',
+      Contact: 'contact',
     };
   }
 
