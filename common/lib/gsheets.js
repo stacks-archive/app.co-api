@@ -76,7 +76,6 @@ module.exports = class GSheets {
         resolve(value === 'YES');
       } else if (attribute === 'imageUrl') {
         const url = await this.getImageURL(value);
-        console.log('Transformed value: ', value, url);
         resolve(url);
       }
       resolve(value);

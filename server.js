@@ -1,7 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const Mailchimp = require('mailchimp-api-v3');
+const crypto = require('crypto');
 
 require('dotenv').config();
+
+const mailchimp = new Mailchimp(process.env.MAILCHIMP_KEY);
 
 const { App } = require('./db/models');
 const { saveRanking } = require('./common/lib/twitter');
@@ -61,6 +65,23 @@ app.post('/api/submit', async (req, res, next) => {
     res.status(400).send('Bad Request');
     next();
   }
+});
+
+app.post('/api/subscribe', async (req, res) => {
+  const recipientEmail = req.body.email;
+  const recipientEmailHash = crypto
+    .createHash('md5')
+    .update(recipientEmail)
+    .digest('hex');
+
+  const mailchimpUrl = `/lists/${process.env.MAILCHIMP_LIST}/members/${recipientEmailHash}`;
+  console.log(mailchimpUrl);
+  await mailchimp.put(mailchimpUrl, {
+    email_address: recipientEmail,
+    status_if_new: 'subscribed',
+  });
+
+  res.json({ success: true });
 });
 
 app.listen(port, (err) => {
