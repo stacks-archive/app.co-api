@@ -1,9 +1,9 @@
 import '../../tests_helper';
-import Importer from '../../../common/lib/importer';
+import GSheets from '../../../common/lib/gsheets';
 import { App } from '../../../db/models';
 
 test.only('it should be able to setup authentication', async () => {
-  const auth = Importer.auth();
+  const auth = GSheets.auth();
   expect(auth.credentials.access_token).toEqual(process.env.GOOGLE_ACCESS_TOKEN);
   expect(auth._clientSecret).toEqual(process.env.GOOGLE_OAUTH_SECRET);
   expect(auth._clientId).toEqual(process.env.GOOGLE_OAUTH_CLIENT_ID);
@@ -13,7 +13,7 @@ test.only('it should be able to setup authentication', async () => {
 test.only(
   'it should fetch apps on the spreadsheet',
   async () => {
-    const apps = await Importer.import();
+    const apps = await GSheets.import();
     const app = apps[0];
     expect(app.name).toEqual('Aragon');
     expect(app.category).toEqual('Business Tools');
@@ -32,7 +32,7 @@ test.only(
 test(
   'it creates App records correctly',
   async () => {
-    await Importer.import();
+    await GSheets.import();
     const count = await App.count();
     expect(count).toBeGreaterThan(100);
   },
@@ -43,7 +43,7 @@ describe('getImageURL', () => {
   test('it can fetch the right image from google apps', async () => {
     const googleUrl = 'https://photos.app.goo.gl/0LSINllTFGbqhggp2';
 
-    const url = await Importer.getImageURL(googleUrl);
+    const url = await GSheets.getImageURL(googleUrl);
     expect(url).toMatch('https://lh3.googleusercontent.com/');
   });
 });

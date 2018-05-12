@@ -1,6 +1,6 @@
 require('dotenv').config();
-const Importer = require('../common/lib/importer');
+const GSheets = require('../common/lib/gsheets');
 
-Importer.import().then(() => {
+GSheets.import().then(() => {
   console.log('done!');
 });
