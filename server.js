@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const { App } = require('./db/models');
 const { saveRanking } = require('./common/lib/twitter');
+const appConstants = require('./db/models/constants/app-constants');
 
 const port = parseInt(process.env.PORT, 10) || 4000;
 
@@ -28,7 +29,8 @@ app.post('/api/fetch_rankings', async (req, res) => {
 
 app.get('/api/apps', async (req, res) => {
   const apps = await App.findAllWithRankings();
-  res.json(apps);
+  const constants = { appConstants };
+  res.json({ apps, constants });
 });
 
 app.listen(port, (err) => {
