@@ -20,9 +20,11 @@ module.exports = class Importer {
       const sheets = google.sheets({ version: 'v4', auth: this.auth() });
       const sheetOptions = {
         spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-        range: 'Dapps!A:I',
+        range: 'DApps!A:M',
       };
+      console.log('Fetching sheet', process.env.GOOGLE_SPREADSHEET_ID);
       sheets.spreadsheets.values.get(sheetOptions, (error, response) => {
+        console.log('fetched');
         if (error) {
           reject(error);
         } else {
@@ -34,15 +36,15 @@ module.exports = class Importer {
 
   static async transformRows(rows) {
     const headers = rows[0];
-    // console.log(headers);
+    console.log(headers);
     const headerToAttribute = this.headerToAttribute();
     /* eslint no-plusplus: 0 */
-    const appTransactions = _.map(_.slice(rows, 1), (row) => {
+    const appTransactions = _.map(_.slice(rows, 1), async (row) => {
       const data = {};
       for (let i = 0; i < row.length; i++) {
         const columnData = row[i];
         const attribute = headerToAttribute[headers[i]];
-        data[attribute] = this.transformValue(attribute, columnData);
+        data[attribute] = await this.transformValue(attribute, columnData);
       }
       return this.makeApp(data);
     });
@@ -60,28 +62,35 @@ module.exports = class Importer {
       Authentication: 'authentication',
       'Open Source Client?': 'openSourceUrl',
       'Registration Open?': 'registrationIsOpen',
+      Description: 'description',
+      Image: 'imageUrl',
     };
   }
 
   static transformValue(attribute, value) {
-    if (['registrationIsOpen'].indexOf(attribute) !== -1) {
-      return value === 'YES';
-    }
-    return value;
+    return new Promise(async (resolve) => {
+      if (['registrationIsOpen'].indexOf(attribute) !== -1) {
+        resolve(value === 'YES');
+      } else if (attribute === 'imageUrl') {
+        const url = await this.getImageURL(value);
+        console.log('Transformed value: ', value, url);
+        resolve(url);
+      }
+      resolve(value);
+    });
   }
 
   static makeApp(data) {
     return new Promise(async (resolve, reject) => {
       try {
-        // console.log(data);
-        const options = {
+        console.log(data);
+        let [app] = await App.findOrBuild({
           where: { website: data.website },
-          defaults: data,
-        };
-        const [app] = await App.findOrCreate(options);
-        await app.update(data);
+        });
+        app = await app.update(data);
         resolve(app);
       } catch (error) {
+        console.log(error);
         reject(error);
       }
     });

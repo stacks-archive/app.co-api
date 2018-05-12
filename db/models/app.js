@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     openSourceUrl: DataTypes.STRING,
     registrationIsOpen: DataTypes.BOOLEAN,
     trackingIsBlocked: DataTypes.BOOLEAN,
+    imageUrl: DataTypes.STRING,
+    description: DataTypes.TEXT,
     category: {
       type: DataTypes.VIRTUAL,
       get() {
