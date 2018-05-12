@@ -17,21 +17,19 @@ module.exports = class GSheets {
 
   static import() {
     return new Promise(async (resolve, reject) => {
-      const sheets = google.sheets({ version: 'v4', auth: this.auth() });
-      const sheetOptions = {
-        spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-        range: 'DApps!A:M',
-      };
-      console.log('Fetching sheet', process.env.GOOGLE_SPREADSHEET_ID);
-      sheets.spreadsheets.values.get(sheetOptions, (error, response) => {
-        console.log('fetched');
-        if (error) {
-          reject(error);
-        } else {
-          resolve(this.transformRows(response.data.values));
-        }
-      });
+      const response = await this.getSheet();
+      resolve(this.transformRows(response.data.values));
     });
+  }
+
+  static getSheet() {
+    const sheets = google.sheets({ version: 'v4', auth: this.auth() });
+    const sheetOptions = {
+      spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
+      range: 'DApps!A:M',
+    };
+    console.log('Fetching sheet', process.env.GOOGLE_SPREADSHEET_ID);
+    return sheets.spreadsheets.values.get(sheetOptions);
   }
 
   static async transformRows(rows) {
@@ -67,6 +65,10 @@ module.exports = class GSheets {
     };
   }
 
+  static attributeToHeader() {
+    return _.invert(this.headerToAttribute());
+  }
+
   static transformValue(attribute, value) {
     return new Promise(async (resolve) => {
       if (['registrationIsOpen'].indexOf(attribute) !== -1) {
@@ -83,7 +85,6 @@ module.exports = class GSheets {
   static makeApp(data) {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log(data);
         let [app] = await App.findOrBuild({
           where: { website: data.website },
         });
@@ -105,6 +106,30 @@ module.exports = class GSheets {
         resolve(meta.attr('content'));
       }
       resolve(url);
+    });
+  }
+
+  static append(appData) {
+    return new Promise(async (resolve) => {
+      const response = await this.getSheet();
+      const headers = response.data.values[0];
+      const headerToAttribute = this.headerToAttribute();
+      const rowData = headers.map((header) => {
+        const attr = headerToAttribute[header];
+        return appData[attr];
+      });
+      const sheets = google.sheets({ version: 'v4', auth: this.auth() });
+      console.log('Appending row:', rowData);
+      const sheetOptions = {
+        spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
+        range: 'Submissions!A1:M1',
+        resource: {
+          values: [rowData],
+        },
+        valueInputOption: 'USER_ENTERED',
+      };
+      const appendResponse = await sheets.spreadsheets.values.append(sheetOptions);
+      resolve(appendResponse);
     });
   }
 };

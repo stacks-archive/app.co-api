@@ -6,5 +6,7 @@ fixtures/generated
 google-credentials.json
 scripts/google_oauth.js
 credentials.json
+client_secret.json
 yarn-error.log
 .vscode
+.DS_Store
