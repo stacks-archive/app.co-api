@@ -26,7 +26,7 @@ module.exports = class GSheets {
     const sheets = google.sheets({ version: 'v4', auth: this.auth() });
     const sheetOptions = {
       spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-      range: 'DApps!A:M',
+      range: 'DApps!A:N',
     };
     console.log('Fetching sheet', process.env.GOOGLE_SPREADSHEET_ID);
     return sheets.spreadsheets.values.get(sheetOptions);
@@ -37,16 +37,16 @@ module.exports = class GSheets {
     console.log(headers);
     const headerToAttribute = this.headerToAttribute();
     /* eslint no-plusplus: 0 */
-    const appTransactions = _.map(_.slice(rows, 1), async (row) => {
+    const apps = _.map(_.slice(rows, 1), async (row) => {
       const data = {};
       for (let i = 0; i < row.length; i++) {
         const columnData = row[i];
         const attribute = headerToAttribute[headers[i]];
         data[attribute] = await this.transformValue(attribute, columnData);
       }
-      return this.makeApp(data);
+      return await this.makeApp(data);
     });
-    const apps = await Promise.all(appTransactions);
+    // const apps = await Promise.all(appTransactions);
     return apps;
   }
 
@@ -122,7 +122,7 @@ module.exports = class GSheets {
       console.log('Appending row:', rowData);
       const sheetOptions = {
         spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-        range: 'Submissions!A1:M1',
+        range: 'Submissions!A1:N1',
         resource: {
           values: [rowData],
         },
