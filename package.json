@@ -25,6 +25,7 @@
     "next": "^6.0.0",
     "pg": "^7.4.1",
     "polished": "^1.9.2",
+    "promise-queue": "^2.2.5",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",

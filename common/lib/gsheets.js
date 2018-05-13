@@ -2,6 +2,7 @@ const { google } = require('googleapis');
 const _ = require('lodash');
 const cheerio = require('cheerio');
 const request = require('request-promise');
+const Queue = require('promise-queue');
 
 const { App } = require('../../db/models');
 
@@ -37,16 +38,18 @@ module.exports = class GSheets {
     console.log(headers);
     const headerToAttribute = this.headerToAttribute();
     /* eslint no-plusplus: 0 */
-    const apps = _.map(_.slice(rows, 1), async (row) => {
+    const queue = new Queue(1, rows.length);
+    const appTransactions = _.map(_.slice(rows, 1), async (row) => {
       const data = {};
       for (let i = 0; i < row.length; i++) {
         const columnData = row[i];
         const attribute = headerToAttribute[headers[i]];
         data[attribute] = await this.transformValue(attribute, columnData);
       }
-      return await this.makeApp(data);
+      return this.makeApp(data);
     });
-    // const apps = await Promise.all(appTransactions);
+    const apps = await queue.add(appTransactions);
+    console.log('Done!');
     return apps;
   }
 
