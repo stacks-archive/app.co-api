@@ -38,17 +38,23 @@ module.exports = class GSheets {
     console.log(headers);
     const headerToAttribute = this.headerToAttribute();
     /* eslint no-plusplus: 0 */
-    const queue = new Queue(1, rows.length);
+    // const queue = new Queue(1, Infinity);
     const appTransactions = _.map(_.slice(rows, 1), async (row) => {
       const data = {};
-      for (let i = 0; i < row.length; i++) {
+      for (let i = 0; i < headers.length; i++) {
         const columnData = row[i];
         const attribute = headerToAttribute[headers[i]];
         data[attribute] = await this.transformValue(attribute, columnData);
       }
+      console.log(data);
       return this.makeApp(data);
     });
-    const apps = await queue.add(appTransactions);
+    // const apps = await queue.add(appTransactions);
+    const apps = [];
+    for (let index = 0; index < appTransactions.length; index++) {
+      const transaction = appTransactions[index];
+      apps.push(await transaction());
+    }
     console.log('Done!');
     return apps;
   }
