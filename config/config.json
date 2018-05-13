@@ -20,6 +20,14 @@
     "use_env_variable": "DATABASE_URL",
     "database": "app_co_production",
     "dialect": "postgres",
-    "migrations-path": "./db/migrations"
+    "migrations-path": "./db/migrations",
+    "pool": {
+      "max": 5,
+      "min": 1,
+      "idle": 10000,
+      "acquire": 10000,
+      "evict": 60000,
+      "handleDisconnects": true
+    }
   }
 }

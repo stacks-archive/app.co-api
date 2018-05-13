@@ -50,11 +50,12 @@ module.exports = class GSheets {
       return this.makeApp(data);
     });
     // const apps = await queue.add(appTransactions);
-    const apps = [];
-    for (let index = 0; index < appTransactions.length; index++) {
-      const transaction = appTransactions[index];
-      apps.push(await transaction());
-    }
+    // const apps = [];
+    // for (let index = 0; index < appTransactions.length; index++) {
+    //   const transaction = appTransactions[index];
+    //   apps.push(await transaction());
+    // }
+    const apps = await Promise.all(appTransactions);
     console.log('Done!');
     return apps;
   }
