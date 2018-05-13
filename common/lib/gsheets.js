@@ -2,7 +2,8 @@ const { google } = require('googleapis');
 const _ = require('lodash');
 const cheerio = require('cheerio');
 const request = require('request-promise');
-const Queue = require('promise-queue');
+// const Queue = require('promise-queue');
+const Promise = require('bluebird');
 
 const { App } = require('../../db/models');
 
@@ -39,18 +40,7 @@ module.exports = class GSheets {
     // const headerToAttribute = this.headerToAttribute();
     /* eslint no-plusplus: 0 */
     // const queue = new Queue(1, Infinity);
-    const appTransactions = _.map(
-      _.slice(rows, 1),
-      async (row) => this.transformRow(row, headers),
-      // const data = {};
-      // for (let i = 0; i < headers.length; i++) {
-      //   const columnData = row[i];
-      //   const attribute = headerToAttribute[headers[i]];
-      //   data[attribute] = await this.transformValue(attribute, columnData);
-      // }
-      // console.log(data);
-      // return this.makeApp(data);
-    );
+    const apps = await Promise.map(_.slice(rows, 1), (row) => this.transformRow(row, headers), { concurrency: 1 });
     // const apps = await queue.add(appTransactions);
     // const apps = [];
     // for (let index = 0; index < appTransactions.length; index++) {
@@ -58,7 +48,7 @@ module.exports = class GSheets {
     //   apps.push(await transaction());
     // }
     // console.log(rows.length, appTransactions.length);
-    const apps = await Promise.all(appTransactions);
+    // const apps = await Promise.all(appTransactions);
     console.log('Done!');
     return apps;
   }
@@ -77,8 +67,11 @@ module.exports = class GSheets {
       for (let i = 0; i < attrs.length; i++) {
         const attr = attrs[i];
         const attribute = headerToAttribute[headers[i]];
-        console.log(attribute, attr);
-        data[attribute] = attr;
+        // console.log(attribute, attr);
+        data[attribute] = attr || null;
+      }
+      if (!data.name) {
+        return resolve(null);
       }
       console.log(data);
       const app = await this.makeApp(data);
