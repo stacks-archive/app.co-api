@@ -36,28 +36,54 @@ module.exports = class GSheets {
   static async transformRows(rows) {
     const headers = rows[0];
     console.log(headers);
-    const headerToAttribute = this.headerToAttribute();
+    // const headerToAttribute = this.headerToAttribute();
     /* eslint no-plusplus: 0 */
     // const queue = new Queue(1, Infinity);
-    const appTransactions = _.map(_.slice(rows, 1), async (row) => {
-      const data = {};
-      for (let i = 0; i < headers.length; i++) {
-        const columnData = row[i];
-        const attribute = headerToAttribute[headers[i]];
-        data[attribute] = await this.transformValue(attribute, columnData);
-      }
-      console.log(data);
-      return this.makeApp(data);
-    });
+    const appTransactions = _.map(
+      _.slice(rows, 1),
+      async (row) => this.transformRow(row, headers),
+      // const data = {};
+      // for (let i = 0; i < headers.length; i++) {
+      //   const columnData = row[i];
+      //   const attribute = headerToAttribute[headers[i]];
+      //   data[attribute] = await this.transformValue(attribute, columnData);
+      // }
+      // console.log(data);
+      // return this.makeApp(data);
+    );
     // const apps = await queue.add(appTransactions);
     // const apps = [];
     // for (let index = 0; index < appTransactions.length; index++) {
     //   const transaction = appTransactions[index];
     //   apps.push(await transaction());
     // }
+    // console.log(rows.length, appTransactions.length);
     const apps = await Promise.all(appTransactions);
     console.log('Done!');
     return apps;
+  }
+
+  static transformRow(row, headers) {
+    return new Promise(async (resolve) => {
+      const data = {};
+      const headerToAttribute = this.headerToAttribute();
+      const attrPromises = _.map(headers, (header, i) => {
+        const columnData = row[i];
+        const attribute = headerToAttribute[headers[i]];
+        return this.transformValue(attribute, columnData);
+      });
+      const attrs = await Promise.all(attrPromises);
+      // console.log(attrs);
+      for (let i = 0; i < attrs.length; i++) {
+        const attr = attrs[i];
+        const attribute = headerToAttribute[headers[i]];
+        console.log(attribute, attr);
+        data[attribute] = attr;
+      }
+      console.log(data);
+      const app = await this.makeApp(data);
+      resolve(app);
+    });
   }
 
   static headerToAttribute() {
