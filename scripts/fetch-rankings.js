@@ -7,6 +7,7 @@ const sync = async () => {
   const apps = await App.findAll();
   await Promise.map(apps, (app) => saveRanking(app));
   console.log('Done!');
+  process.exit();
 };
 
 sync();
