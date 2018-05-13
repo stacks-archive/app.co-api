@@ -135,7 +135,7 @@ module.exports = class GSheets {
 
   static getImageURL(url) {
     return new Promise(async (resolve) => {
-      if (url.indexOf('photos.app.goo') !== -1) {
+      if (url && url.indexOf('photos.app.goo') !== -1) {
         const response = await request(url);
         const $ = cheerio.load(response);
         const meta = $('meta[property="og:image"]');
