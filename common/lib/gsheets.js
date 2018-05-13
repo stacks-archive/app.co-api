@@ -36,20 +36,7 @@ module.exports = class GSheets {
 
   static async transformRows(rows) {
     const headers = rows[0];
-    console.log(headers);
-    // const headerToAttribute = this.headerToAttribute();
-    /* eslint no-plusplus: 0 */
-    // const queue = new Queue(1, Infinity);
     const apps = await Promise.map(_.slice(rows, 1), (row) => this.transformRow(row, headers), { concurrency: 1 });
-    // const apps = await queue.add(appTransactions);
-    // const apps = [];
-    // for (let index = 0; index < appTransactions.length; index++) {
-    //   const transaction = appTransactions[index];
-    //   apps.push(await transaction());
-    // }
-    // console.log(rows.length, appTransactions.length);
-    // const apps = await Promise.all(appTransactions);
-    console.log('Done!');
     return apps;
   }
 
@@ -63,17 +50,15 @@ module.exports = class GSheets {
         return this.transformValue(attribute, columnData);
       });
       const attrs = await Promise.all(attrPromises);
-      // console.log(attrs);
       for (let i = 0; i < attrs.length; i++) {
         const attr = attrs[i];
         const attribute = headerToAttribute[headers[i]];
-        // console.log(attribute, attr);
         data[attribute] = attr || null;
       }
       if (!data.name) {
         return resolve(null);
       }
-      console.log(data);
+      // console.log(data);
       const app = await this.makeApp(data);
       resolve(app);
     });
