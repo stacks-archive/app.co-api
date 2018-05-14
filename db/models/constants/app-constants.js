@@ -13,7 +13,7 @@ const categoryEnums = {
   Chat: 9,
   'Utilities & Productivity': 10,
   'Documents & Storage': 11,
-  'Social Giving': 12,
+  'Social Impact': 12,
 };
 
 const categoryIDToEnum = _.invert(categoryEnums);
