@@ -57,7 +57,10 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
   App.associate = function associations(models) {
-    App.Rankings = App.hasMany(models.Ranking, { foreignKey: 'appId' });
+    App.Rankings = App.hasMany(models.Ranking, {
+      foreignKey: 'appId',
+      onDelete: 'CASCADE',
+    });
     App.findAllWithRankings = () =>
       App.findAll({
         include: [
