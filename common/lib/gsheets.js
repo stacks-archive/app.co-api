@@ -100,10 +100,14 @@ module.exports = class GSheets {
   static makeApp(data) {
     return new Promise(async (resolve, reject) => {
       try {
-        let [app] = await App.findOrBuild({
-          where: { name: { [Op.iLike]: data.a } },
+        let app = await App.findOne({
+          where: { name: { [Op.iLike]: data.name } },
         });
-        app = await app.update(data);
+        if (app) {
+          app = await app.update(data);
+        } else {
+          app = await App.create(data);
+        }
         resolve(app);
       } catch (error) {
         console.log(error);

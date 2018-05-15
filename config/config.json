@@ -5,7 +5,8 @@
     "database": "app_co_development",
     "host": "127.0.0.1",
     "dialect": "postgres",
-    "migrations-path": "./db/migrations"
+    "migrations-path": "./db/migrations",
+    "logging": true
   },
   "test": {
     "username": null,
