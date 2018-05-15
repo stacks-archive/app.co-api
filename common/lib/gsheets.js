@@ -100,7 +100,7 @@ module.exports = class GSheets {
     return new Promise(async (resolve, reject) => {
       try {
         let [app] = await App.findOrBuild({
-          where: { website: data.website },
+          where: { name: { $iLike: data.name } },
         });
         app = await app.update(data);
         resolve(app);
