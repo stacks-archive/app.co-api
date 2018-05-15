@@ -4,6 +4,7 @@ const cheerio = require('cheerio');
 const request = require('request-promise');
 // const Queue = require('promise-queue');
 const Promise = require('bluebird');
+const { Op } = require('sequelize');
 
 const { App } = require('../../db/models');
 
@@ -100,7 +101,7 @@ module.exports = class GSheets {
     return new Promise(async (resolve, reject) => {
       try {
         let [app] = await App.findOrBuild({
-          where: { name: { $iLike: data.name } },
+          where: { name: { [Op.iLike]: data.a } },
         });
         app = await app.update(data);
         resolve(app);
