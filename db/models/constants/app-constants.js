@@ -43,7 +43,7 @@ const storageIDToEnum = _.invert(storageEnums);
 const authenticationEnums = {
   Blockstack: 0,
   Ethereum: 1,
-  SteemConnect: 2,
+  Steem: 2,
   Civic: 3,
   ZeroNet: 4,
   uPort: 5,
