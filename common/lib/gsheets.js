@@ -25,11 +25,11 @@ module.exports = class GSheets {
     });
   }
 
-  static getSheet() {
+  static getSheet(sheetName = 'DApps') {
     const sheets = google.sheets({ version: 'v4', auth: this.auth() });
     const sheetOptions = {
       spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-      range: 'DApps!A:N',
+      range: `${sheetName}!A:Z`,
     };
     console.log('Fetching sheet', process.env.GOOGLE_SPREADSHEET_ID);
     return sheets.spreadsheets.values.get(sheetOptions);
@@ -78,6 +78,7 @@ module.exports = class GSheets {
       Description: 'description',
       Image: 'imageUrl',
       Contact: 'contact',
+      'Twitter Handle': 'twitterHandle',
     };
   }
 
@@ -130,11 +131,14 @@ module.exports = class GSheets {
 
   static append(appData) {
     return new Promise(async (resolve) => {
-      const response = await this.getSheet();
+      const response = await this.getSheet('Submissions');
       const headers = response.data.values[0];
       const headerToAttribute = this.headerToAttribute();
       const rowData = headers.map((header) => {
         const attr = headerToAttribute[header];
+        if (attr === 'registrationIsOpen') {
+          return appData[attr] ? 'YES' : 'NO';
+        }
         return appData[attr];
       });
       const sheets = google.sheets({ version: 'v4', auth: this.auth() });
