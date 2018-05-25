@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     trackingIsBlocked: DataTypes.BOOLEAN,
     imageUrl: DataTypes.STRING,
     description: DataTypes.TEXT,
+    twitterHandle: DataTypes.STRING,
     category: {
       type: DataTypes.VIRTUAL,
       get() {
