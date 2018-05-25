@@ -45,7 +45,11 @@ const paginateMentions = (app) =>
       if (!hostname || hostname.length === 0) {
         return resolve(totalMentions);
       }
-      const options = { q: encodeURIComponent(hostname), count: 100 };
+      const query = [encodeURIComponent(hostname)];
+      if (app.twitterHandle && app.twitterHandle.length > 0) {
+        query.push(app.twitterHandle);
+      }
+      const options = { q: query.join(' OR '), count: 100 };
       try {
         while (lastCount === 100) {
           /* eslint no-await-in-loop: [0] */
