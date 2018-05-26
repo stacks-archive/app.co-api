@@ -37,7 +37,7 @@ module.exports = class GSheets {
 
   static async transformRows(rows) {
     const headers = rows[0];
-    const apps = await Promise.map(_.slice(rows, 1), (row) => this.transformRow(row, headers), { concurrency: 1 });
+    const apps = await Promise.map(_.slice(rows, 1), (row) => this.transformRow(row, headers), { concurrency: 3 });
     return apps;
   }
 
