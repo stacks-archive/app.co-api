@@ -49,6 +49,7 @@ const paginateMentions = (app) =>
       if (app.twitterHandle && app.twitterHandle.length > 0) {
         query.push(app.twitterHandle);
       }
+      console.log(`Fetching twitter results for ${app.name}. Query: '${query.join(' OR ')}`);
       const options = { q: query.join(' OR '), count: 100 };
       try {
         while (lastCount === 100) {
