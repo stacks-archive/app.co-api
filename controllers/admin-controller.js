@@ -20,6 +20,8 @@ const updatableKeys = [
   'storageNetwork',
   'openSourceUrl',
   'twitterHandle',
+  'notes',
+  'status',
 ];
 
 router.post('/apps/:appId', async (req, res) => {
@@ -33,6 +35,21 @@ router.post('/apps/:appId', async (req, res) => {
   app = await app.update(data);
 
   res.json({ success: true, app });
+});
+
+router.get('/apps/pending', async (req, res) => {
+  const apps = await App.findAll({
+    where: {
+      status: 'pending_audit',
+    },
+  });
+  console.log(apps);
+  res.json({ apps });
+});
+
+router.get('/apps', async (req, res) => {
+  const apps = await App.findAllWithRankings(true);
+  res.json({ apps });
 });
 
 module.exports = router;

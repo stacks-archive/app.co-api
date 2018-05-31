@@ -3,30 +3,39 @@ const Mailchimp = require('mailchimp-api-v3');
 const crypto = require('crypto');
 const { verifyAuthResponse } = require('blockstack/lib/auth/authVerification');
 const { decodeToken } = require('jsontokens');
+const _ = require('lodash');
 
-const { User } = require('../db/models');
+const { App, User } = require('../db/models');
 const { createToken } = require('../common/lib/auth/token');
 
 const mailchimp = new Mailchimp(process.env.MAILCHIMP_KEY);
 
 const router = express.Router();
 
+const createableKeys = [
+  'name',
+  'contact',
+  'website',
+  'description',
+  'imageUrl',
+  'category',
+  'blockchain',
+  'authentication',
+  'storageNetwork',
+  'openSourceUrl',
+  'twitterHandle',
+];
+
 router.post('/submit', async (req, res, next) => {
-  if (process.env.API_KEY === req.query.key) {
-    const appData = req.body;
-    console.log('Request to submit app:', req.body);
-    try {
-      await GSheets.append(appData);
-      console.log('Appended.');
-      res.json({ success: true });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ success: false });
-    }
-    next();
-  } else {
-    res.status(400).send('Bad Request');
-    next();
+  const appData = _.pick(req.body, createableKeys);
+  appData.status = 'pending_audit';
+  console.log('Request to submit app:', appData);
+  try {
+    const app = await App.create(appData);
+    res.json({ success: true, app });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false });
   }
 });
 

@@ -19,7 +19,12 @@ module.exports = (sequelize, DataTypes) => {
     trackingIsBlocked: DataTypes.BOOLEAN,
     imageUrl: DataTypes.STRING,
     description: DataTypes.TEXT,
+<<<<<<< HEAD
     twitterHandle: DataTypes.STRING,
+=======
+    status: DataTypes.STRING,
+    notes: DataTypes.TEXT,
+>>>>>>> more app columns, admin api methods
     category: {
       type: DataTypes.VIRTUAL,
       get() {
@@ -62,8 +67,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'appId',
       onDelete: 'CASCADE',
     });
-    App.findAllWithRankings = () =>
-      App.findAll({
+    App.findAllWithRankings = (isAdmin = false) => {
+      const exclude = isAdmin ? [] : ['status', 'notes'];
+      return App.findAll({
+        attributes: {
+          exclude,
+        },
         include: [
           {
             model: models.Ranking,
@@ -72,6 +81,7 @@ module.exports = (sequelize, DataTypes) => {
           },
         ],
       });
+    };
   };
 
   _.extend(App, ENUMS);
