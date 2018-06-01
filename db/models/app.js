@@ -68,11 +68,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
     });
     App.findAllWithRankings = (isAdmin = false) => {
-      const exclude = isAdmin ? [] : ['status', 'notes'];
-      return App.findAll({
-        attributes: {
-          exclude,
-        },
+      const options = {
         include: [
           {
             model: models.Ranking,
@@ -80,7 +76,12 @@ module.exports = (sequelize, DataTypes) => {
             limit: 1,
           },
         ],
-      });
+      };
+      if (!isAdmin) {
+        options.exclude = ['status', 'notes'];
+        options.where = { status: 'accepted' };
+      }
+      return App.findAll(options);
     };
   };
 
