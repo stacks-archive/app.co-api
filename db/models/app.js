@@ -19,12 +19,9 @@ module.exports = (sequelize, DataTypes) => {
     trackingIsBlocked: DataTypes.BOOLEAN,
     imageUrl: DataTypes.STRING,
     description: DataTypes.TEXT,
-<<<<<<< HEAD
     twitterHandle: DataTypes.STRING,
-=======
     status: DataTypes.STRING,
     notes: DataTypes.TEXT,
->>>>>>> more app columns, admin api methods
     category: {
       type: DataTypes.VIRTUAL,
       get() {
