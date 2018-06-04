@@ -3,6 +3,7 @@ const jwt = require('express-jwt');
 const _ = require('lodash');
 
 const { App } = require('../db/models');
+const { clearCache } = require('../common/lib/utils');
 
 const router = express.Router();
 
@@ -26,13 +27,11 @@ const updatableKeys = [
 
 router.post('/apps/:appId', async (req, res) => {
   let app = await App.findOne({ where: { id: req.params.appId } });
-  console.log(req.user);
-  console.log(app.name);
-  console.log(req.body);
+  console.log(`Saving ${app.name}`);
   const data = _.pick(req.body, updatableKeys);
-  console.log(data);
 
   app = await app.update(data);
+  await clearCache();
 
   res.json({ success: true, app });
 });
