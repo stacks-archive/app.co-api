@@ -107,7 +107,8 @@ module.exports = class GSheets {
         if (app) {
           app = await app.update(data);
         } else {
-          app = await App.create(data);
+          const attrs = _.extend(data, { status: 'pending_audit' });
+          app = await App.create(attrs);
         }
         resolve(app);
       } catch (error) {
