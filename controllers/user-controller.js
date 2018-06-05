@@ -7,6 +7,7 @@ const _ = require('lodash');
 
 const { App, User } = require('../db/models');
 const { createToken } = require('../common/lib/auth/token');
+const { sendMail, newAppEmail } = require('../common/lib/mailer');
 
 const mailchimp = new Mailchimp(process.env.MAILCHIMP_KEY);
 
@@ -26,12 +27,13 @@ const createableKeys = [
   'twitterHandle',
 ];
 
-router.post('/submit', async (req, res, next) => {
+router.post('/submit', async (req, res) => {
   const appData = _.pick(req.body, createableKeys);
   appData.status = 'pending_audit';
   console.log('Request to submit app:', appData);
   try {
     const app = await App.create(appData);
+    sendMail(newAppEmail(app));
     res.json({ success: true, app });
   } catch (error) {
     console.log(error);
