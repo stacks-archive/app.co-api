@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 module.exports = {
   createToken: (user) => {
+    console.log(user);
     const data = {
       id: user.id,
       username: user.blockstackUsername,

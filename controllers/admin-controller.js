@@ -9,6 +9,18 @@ const router = express.Router();
 
 router.use(jwt({ secret: process.env.JWT_SECRET }));
 
+const { admins } = require('../config/config.json');
+
+router.use((req, res, next) => {
+  if (!req.user) {
+    return next(); // handled by express-jwt
+  }
+  if (admins.indexOf(req.user.data.username) === -1) {
+    return res.status(400).json({ success: false });
+  }
+  return next();
+});
+
 const updatableKeys = [
   'name',
   'contact',
@@ -42,7 +54,7 @@ router.get('/apps/pending', async (req, res) => {
       status: 'pending_audit',
     },
   });
-  console.log(apps);
+  // console.log(apps);
   res.json({ apps });
 });
 
