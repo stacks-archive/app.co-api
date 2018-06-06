@@ -1,26 +1,6 @@
 app.co
 ----
 
-### Website 
-
-The website is a [next.js](https://github.com/zeit/next.js/) application. To begin, install the required dependencies:
-
-```bash
-yarn
-```
-
-To run the development server:
-
-```bash
-yarn dev
-```
-
-To build for production:
-
-```bash
-yarn build
-```
-
 ### Database Setup
 
 We use the [sequelize](https://github.com/sequelize/sequelize) package for ORM and database connection. To setup the database, make sure you
@@ -44,6 +24,22 @@ Then, run:
 ```bash
 node scripts/import-spreadsheet.js
 ```
+
+### Environment setup
+
+There are some ENV variables you should set before running the app. To get started, run `cp .env.sample .env` to create a `.env` file. Then, change the values in that file as appropriate.
+
+### Running the app
+
+Run `node server.js` to start the API server.
+
+### Update Twitter Rankings
+
+First, make sure you've setup Twitter API secrets in your `.env` file. Then, run:
+
+~~~bash
+node scripts/fetch-rankings.js
+~~~
 
 ### Running tests
 
