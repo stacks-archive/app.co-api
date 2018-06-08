@@ -20,6 +20,8 @@ module.exports = (sequelize, DataTypes) => {
     imageUrl: DataTypes.STRING,
     description: DataTypes.TEXT,
     twitterHandle: DataTypes.STRING,
+    status: DataTypes.STRING,
+    notes: DataTypes.TEXT,
     category: {
       type: DataTypes.VIRTUAL,
       get() {
@@ -62,8 +64,8 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'appId',
       onDelete: 'CASCADE',
     });
-    App.findAllWithRankings = () =>
-      App.findAll({
+    App.findAllWithRankings = (isAdmin = false) => {
+      const options = {
         include: [
           {
             model: models.Ranking,
@@ -71,7 +73,13 @@ module.exports = (sequelize, DataTypes) => {
             limit: 1,
           },
         ],
-      });
+      };
+      if (!isAdmin) {
+        options.exclude = ['status', 'notes'];
+        options.where = { status: 'accepted' };
+      }
+      return App.findAll(options);
+    };
   };
 
   _.extend(App, ENUMS);

@@ -6,7 +6,7 @@
     "host": "127.0.0.1",
     "dialect": "postgres",
     "migrations-path": "./db/migrations",
-    "logging": true
+    "logging": false
   },
   "test": {
     "username": null,
@@ -30,5 +30,8 @@
       "evict": 60000,
       "handleDisconnects": true
     }
-  }
+  },
+  "admins": [
+    "hankstoever.id"
+  ]
 }
