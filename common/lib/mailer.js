@@ -8,7 +8,7 @@ const sendMail = (email) =>
       transport = sendgridTransport({
         auth: {
           api_user: process.env.SENDGRID_USERNAME,
-          api_password: process.env.SENDGRID_PASSWORD,
+          api_key: process.env.SENDGRID_PASSWORD,
         },
       });
     } else {
