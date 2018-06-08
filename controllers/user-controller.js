@@ -78,9 +78,8 @@ router.post('/authenticate', async (req, res) => {
   };
 
   const [user] = await User.findOrBuild({ where: userAttrs, defaults: userAttrs });
-  await user.update({
-    blockstackDID: payload.iss,
-  });
+  userAttrs.blockstackDID = payload.iss;
+  await user.update(userAttrs);
   console.log(user.id);
   const jwt = createToken(user);
 
