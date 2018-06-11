@@ -75,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
         ],
       };
       if (!isAdmin) {
-        options.exclude = ['status', 'notes'];
+        options.attributes = { exclude: ['status', 'notes'] };
         options.where = { status: 'accepted' };
       }
       return App.findAll(options);
