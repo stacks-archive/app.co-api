@@ -64,6 +64,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'appId',
       onDelete: 'CASCADE',
     });
+
+    App.Slugs = App.hasMany(models.Slug, {
+      foreignKey: 'appId',
+      onDelete: 'CASCADE',
+    });
+
     App.findAllWithRankings = (isAdmin = false) => {
       const options = {
         include: [
@@ -71,6 +77,10 @@ module.exports = (sequelize, DataTypes) => {
             model: models.Ranking,
             order: [['date', 'DESC']],
             limit: 1,
+          },
+          {
+            model: models.Slug,
+            order: [['default', 'DESC']],
           },
         ],
       };
