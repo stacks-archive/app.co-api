@@ -14,6 +14,7 @@ const categoryEnums = {
   'Utilities & Productivity': 10,
   'Documents & Storage': 11,
   'Social Impact': 12,
+  Wallets: 13,
 };
 
 const categoryIDToEnum = _.invert(categoryEnums);
