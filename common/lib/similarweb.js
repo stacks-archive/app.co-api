@@ -29,9 +29,30 @@ const getBounceRate = (domain) => getEndpoint(domain, 'bounce-rate');
 const getPageViews = (domain) => getEndpoint(domain, 'pages-per-visit');
 const getVisitDuration = (domain) => getEndpoint(domain, 'average-visit-duration');
 
+const getTrafficData = (domain) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const [visits, bounceRate, pageViews, visitDuration] = await Promise.all([
+        getVisitsCount(domain),
+        getBounceRate(domain),
+        getPageViews(domain),
+        getVisitDuration(domain),
+      ]);
+      return resolve({
+        visits,
+        bounceRate,
+        pageViews,
+        visitDuration,
+      });
+    } catch (error) {
+      return reject(error);
+    }
+  });
+
 module.exports = {
   getVisitsCount,
   getBounceRate,
   getPageViews,
   getVisitDuration,
+  getTrafficData,
 };
