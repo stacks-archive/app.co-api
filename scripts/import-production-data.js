@@ -20,6 +20,10 @@ const setRanking = (app, newApp) =>
         defaults: attributes,
       });
       attributes.twitterMentions = existingRanking.twitterMentions;
+      attributes.monthlyVisitsCount = existingRanking.monthlyVisitsCount;
+      attributes.monthlyBounceRate = existingRanking.monthlyBounceRate;
+      attributes.monthlyPageViews = existingRanking.monthlyPageViews;
+      attributes.monthlyVisitDuration = existingRanking.monthlyVisitDuration;
       await ranking.update(attributes);
       resolve();
     } catch (error) {
