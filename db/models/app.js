@@ -115,16 +115,11 @@ module.exports = (sequelize, DataTypes) => {
   App.prototype.setDefaultSlug = function setDefaultSlug() {
     const { Slug } = require('./');
     return new Promise(async (resolve, reject) => {
-      // console.log('Setting slug for', this.name);
-      // const slugs = await this.Slugs();
       const slugs = await Slug.findAll({ where: { appId: this.id } });
-      // console.log('slugs', slugs);
       if (slugs.length !== 0) {
-        // console.log('existing slug:', slugs[0].value);
         return resolve();
       }
       const value = slugify(this.name.toLowerCase());
-      // console.log('New slug:', value);
       try {
         const slug = await Slug.create({
           value,

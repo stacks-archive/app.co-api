@@ -1,5 +1,6 @@
 const request = require('request-promise');
 const moment = require('moment');
+const URL = require('url');
 
 const apiKey = process.env.SIMILARWEB_KEY;
 
@@ -7,6 +8,7 @@ const getEndpoint = (domain, endpoint) =>
   new Promise(async (resolve, reject) => {
     const dateFormat = 'YYYY-MM';
     const startMonth = moment()
+      .subtract(1, 'day')
       .subtract(1, 'month')
       .format(dateFormat);
     const endMonth = startMonth;
@@ -20,7 +22,7 @@ const getEndpoint = (domain, endpoint) =>
       const key = endpoint.replace(/-/g, '_');
       resolve(data[key][0][key]);
     } catch (error) {
-      reject(error);
+      reject(error.error.meta.error_message);
     }
   });
 
@@ -49,10 +51,19 @@ const getTrafficData = (domain) =>
     }
   });
 
+const getAppTrafficData = (app) => {
+  const { hostname } = URL.parse(app.website);
+  if (!hostname || hostname.length === 0) {
+    return {};
+  }
+  return getTrafficData(hostname);
+};
+
 module.exports = {
   getVisitsCount,
   getBounceRate,
   getPageViews,
   getVisitDuration,
   getTrafficData,
+  getAppTrafficData,
 };
