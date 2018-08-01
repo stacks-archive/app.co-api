@@ -18,6 +18,7 @@ const saveAllRankings = (app) =>
       await ranking.save();
       resolve(ranking);
     } catch (error) {
+      console.log('Error for app:', app.name, error);
       reject(error);
     }
   });

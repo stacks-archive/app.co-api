@@ -56,6 +56,9 @@ const getTrafficData = (domain) =>
   });
 
 const getAppTrafficData = (app) => {
+  if (!app.website || app.website.length === 0) {
+    return {};
+  }
   const { hostname } = URL.parse(app.website);
   if (!hostname || hostname.length === 0) {
     return {};
