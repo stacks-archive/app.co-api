@@ -47,6 +47,10 @@ const getTrafficData = (domain) =>
         visitDuration,
       });
     } catch (error) {
+      if (error === 'Data not found') {
+        console.log(`No traffic data found for ${domain}`);
+        return resolve({});
+      }
       return reject(error);
     }
   });
