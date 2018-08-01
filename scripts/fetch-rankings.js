@@ -25,7 +25,7 @@ const saveAllRankings = (app) =>
 const sync = async () => {
   try {
     const apps = await App.findAll();
-    await Promise.map(apps.slice(0, 10), (app) => saveAllRankings(app));
+    await Promise.map(apps, (app) => saveAllRankings(app));
     await clearCache();
   } catch (error) {
     console.log('Error when saving rankings:', error);
