@@ -56,13 +56,18 @@ const fetchData = async () => {
           await setRanking(app, newApp);
           resolve(newApp);
         } catch (error) {
+          console.log('Import app error', error);
           reject(error);
         }
       }),
   );
 
-  await Promise.all(importAppPromises);
-  // await clearCache();
+  try {
+    await Promise.all(importAppPromises);
+  } catch (error) {
+    console.log('Error in all Promise.all', error);
+  }
+  await clearCache();
   console.log('Done');
   process.exit();
 };
