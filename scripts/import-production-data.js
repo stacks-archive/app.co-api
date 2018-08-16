@@ -1,6 +1,7 @@
 const request = require('request-promise');
 
 const { App, Ranking } = require('../db/models');
+const { clearCache } = require('../common/lib/utils');
 
 const productionAPI = 'https://app-co-api.herokuapp.com/api/apps';
 
@@ -61,6 +62,7 @@ const fetchData = async () => {
   );
 
   await Promise.all(importAppPromises);
+  await clearCache();
   console.log('Done');
   process.exit();
 };
