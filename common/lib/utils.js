@@ -3,6 +3,10 @@ const request = require('request-promise');
 const clearCache = () =>
   new Promise(async (resolve, reject) => {
     const url = process.env.CLEAR_CACHE_URL;
+    if (!url || url.length === 0) {
+      console.log('No clear cache URL configured, skipping.');
+      return resolve();
+    }
     console.log(`Clearing cache at URL: ${url}`);
     try {
       await request.get(url);

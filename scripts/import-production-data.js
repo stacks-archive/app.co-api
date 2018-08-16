@@ -54,6 +54,7 @@ const fetchData = async () => {
           let newApp = await App.findOne({ where: { name: nameQuery } });
           if (newApp) {
             console.log('Found existing app:', app.name);
+            await newApp.update(app);
           } else {
             console.log('Creating new app:', app.name);
             newApp = await App.create(app);
