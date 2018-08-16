@@ -62,7 +62,7 @@ const fetchData = async () => {
   );
 
   await Promise.all(importAppPromises);
-  await clearCache();
+  // await clearCache();
   console.log('Done');
   process.exit();
 };
