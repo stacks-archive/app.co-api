@@ -30,8 +30,8 @@ const setRanking = (app, newApp) =>
       await ranking.update(attributes);
       resolve();
     } catch (error) {
-      console.log('Error when saving slug for app', newApp.name);
-      resolve(); // dont reject, move on
+      console.log('Error when saving ranking for app', newApp.name);
+      reject(error); // dont reject, move on
     }
   });
 
@@ -50,7 +50,7 @@ const fetchData = async () => {
           const { name } = app;
           const nameQuery = sequelize.where(sequelize.fn('LOWER', sequelize.col('name')), name.toLowerCase());
           let newApp = await App.findOne({ where: { name: nameQuery } });
-          const appAttrs = _.omit(app, ['id']);
+          const appAttrs = _.omit(app, ['id', 'Slugs', 'Rankings']);
           if (newApp) {
             console.log('Found existing app:', app.name);
             await newApp.update(appAttrs);
@@ -58,8 +58,12 @@ const fetchData = async () => {
             console.log('Creating new app:', app.name);
             newApp = await App.create(appAttrs);
           }
-          await newApp.setDefaultSlug();
           await setRanking(app, newApp);
+          try {
+            await newApp.setDefaultSlug();
+          } catch (error) {
+            console.log('Slug error for app:', app.name);
+          }
           resolve(newApp);
         } catch (error) {
           console.log('Import app error', error);
