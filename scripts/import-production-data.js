@@ -1,4 +1,5 @@
 const request = require('request-promise');
+const sequelize = require('sequelize');
 
 const { App, Ranking } = require('../db/models');
 const { clearCache } = require('../common/lib/utils');
@@ -45,7 +46,12 @@ const fetchData = async () => {
       new Promise(async (resolve, reject) => {
         try {
           const { name } = app;
-          let newApp = await App.findOne({ where: { name } });
+          const nameQuery = sequelize.where(
+            sequelize.fn('LOWER', sequelize.col('name')),
+            'LIKE',
+            `%${name.toLowerCase()}%`,
+          );
+          let newApp = await App.findOne({ where: { name: nameQuery } });
           if (newApp) {
             console.log('Found existing app:', app.name);
           } else {
