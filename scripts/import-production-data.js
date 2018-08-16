@@ -30,7 +30,8 @@ const setRanking = (app, newApp) =>
       await ranking.update(attributes);
       resolve();
     } catch (error) {
-      reject(error);
+      console.log('Error when saving slug for app', newApp.name);
+      resolve(); // dont reject, move on
     }
   });
 
