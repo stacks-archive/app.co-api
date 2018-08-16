@@ -1,5 +1,6 @@
 const request = require('request-promise');
 const sequelize = require('sequelize');
+const _ = require('lodash');
 
 const { App, Ranking } = require('../db/models');
 const { clearCache } = require('../common/lib/utils');
@@ -48,12 +49,13 @@ const fetchData = async () => {
           const { name } = app;
           const nameQuery = sequelize.where(sequelize.fn('LOWER', sequelize.col('name')), name.toLowerCase());
           let newApp = await App.findOne({ where: { name: nameQuery } });
+          const appAttrs = _.omit(app, ['id']);
           if (newApp) {
             console.log('Found existing app:', app.name);
-            await newApp.update(app);
+            await newApp.update(appAttrs);
           } else {
             console.log('Creating new app:', app.name);
-            newApp = await App.create(app);
+            newApp = await App.create(appAttrs);
           }
           await newApp.setDefaultSlug();
           await setRanking(app, newApp);
