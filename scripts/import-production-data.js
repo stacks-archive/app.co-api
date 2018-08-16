@@ -46,11 +46,7 @@ const fetchData = async () => {
       new Promise(async (resolve, reject) => {
         try {
           const { name } = app;
-          const nameQuery = sequelize.where(
-            sequelize.fn('LOWER', sequelize.col('name')),
-            'LIKE',
-            `%${name.toLowerCase()}%`,
-          );
+          const nameQuery = sequelize.where(sequelize.fn('LOWER', sequelize.col('name')), name.toLowerCase());
           let newApp = await App.findOne({ where: { name: nameQuery } });
           if (newApp) {
             console.log('Found existing app:', app.name);
