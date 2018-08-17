@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const uuid = require('uuid/v4');
 
 const ENUMS = require('./constants/app-constants');
 const { slugify } = require('../../common/lib/utils');
@@ -119,16 +120,27 @@ module.exports = (sequelize, DataTypes) => {
       if (slugs.length !== 0) {
         return resolve();
       }
-      const value = slugify(this.name.toLowerCase());
+      let value = slugify(this.name.toLowerCase());
       try {
-        const slug = await Slug.create({
+        await Slug.create({
           value,
           default: true,
           appId: this.id,
         });
         return resolve();
       } catch (error) {
-        return reject(error);
+        console.log(`Duplicate slug found: ${value}. Adding random string.`);
+        value += `-${uuid()}`;
+        try {
+          await Slug.create({
+            value,
+            default: true,
+            appId: this.id,
+          });
+          return resolve();
+        } catch (error) {
+          reject(error);
+        }
       }
     });
   };
