@@ -22,6 +22,7 @@ const getEndpoint = (domain, endpoint) =>
       const key = endpoint.replace(/-/g, '_');
       resolve(data[key][0][key]);
     } catch (error) {
+      console.log(error);
       reject(error.error.meta.error_message);
     }
   });
