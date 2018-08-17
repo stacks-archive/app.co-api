@@ -20,6 +20,7 @@ const getEndpoint = (domain, endpoint) =>
     try {
       const data = await request(reqOptions);
       const key = endpoint.replace(/-/g, '_');
+      console.log(data);
       resolve(data[key][0][key]);
     } catch (error) {
       console.log(error);
