@@ -8,6 +8,7 @@ const _ = require('lodash');
 const { App, User } = require('../db/models');
 const { createToken } = require('../common/lib/auth/token');
 const { sendMail, newAppEmail } = require('../common/lib/mailer');
+const GSheets = require('../common/lib/gsheets');
 
 const mailchimp = new Mailchimp(process.env.MAILCHIMP_KEY);
 
@@ -84,6 +85,12 @@ router.post('/authenticate', async (req, res) => {
   const jwt = createToken(user);
 
   return res.json({ success: true, token: jwt, user });
+});
+
+router.post('/app-mining-submission', async (req, res) => {
+  const submission = req.body;
+  await GSheets.appendAppMiningSubmission(submission);
+  res.json({ success: true });
 });
 
 module.exports = router;

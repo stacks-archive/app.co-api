@@ -156,4 +156,35 @@ module.exports = class GSheets {
       resolve(appendResponse);
     });
   }
+
+  static appendAppMiningSubmission(submission) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const rows = [
+          submission.firstName,
+          submission.lastName,
+          submission.email,
+          submission.appName,
+          submission.website,
+          submission.isBlockstackIntegrated,
+        ];
+
+        const sheets = google.sheets({ version: 'v4', auth: this.auth() });
+        console.log('Appending row to app mining submissions:', rows);
+        const sheetOptions = {
+          spreadsheetId: process.env.APP_MINING_SPREADSHEET_ID,
+          range: 'Submissions!A1:N1',
+          resource: {
+            values: [rows],
+          },
+          valueInputOption: 'USER_ENTERED',
+        };
+        const appendResponse = await sheets.spreadsheets.values.append(sheetOptions);
+        resolve(appendResponse);
+      } catch (error) {
+        console.log('Error when appending app submission to gsheets:', error);
+        reject(error);
+      }
+    });
+  }
 };

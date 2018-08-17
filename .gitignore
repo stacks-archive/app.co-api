@@ -10,3 +10,4 @@ client_secret.json
 yarn-error.log
 .vscode
 .DS_Store
+tmp
