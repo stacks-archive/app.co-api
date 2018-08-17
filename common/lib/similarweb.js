@@ -20,11 +20,14 @@ const getEndpoint = (domain, endpoint) =>
     try {
       const data = await request(reqOptions);
       const key = endpoint.replace(/-/g, '_');
-      console.log(data);
-      resolve(data[key][0][key]);
+      // console.log(data);
+      if (data.meta.error_message === 'Data not found') {
+        return resolve(null);
+      }
+      return resolve(data[key][0][key]);
     } catch (error) {
       console.log(error);
-      reject(error.error.meta.error_message);
+      return reject(error.error.meta.error_message);
     }
   });
 
