@@ -16,7 +16,9 @@ const saveAllRankings = (app) =>
       ranking.monthlyPageViews = pageViews;
       ranking.monthlyVisitDuration = visitDuration;
       await ranking.save();
-      resolve(ranking);
+      setTimeout(() => {
+        resolve(ranking);
+      }, 500);
     } catch (error) {
       console.log('Error for app:', app.name, error);
       reject(error);
