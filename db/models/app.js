@@ -89,20 +89,22 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
     });
 
+    App.includeOptions = {
+      include: [
+        {
+          model: models.Ranking,
+          order: [['date', 'DESC']],
+          limit: 1,
+        },
+        {
+          model: models.Slug,
+          order: [['default', 'DESC']],
+        },
+      ],
+    };
+
     App.findAllWithRankings = (isAdmin = false) => {
-      const options = {
-        include: [
-          {
-            model: models.Ranking,
-            order: [['date', 'DESC']],
-            limit: 1,
-          },
-          {
-            model: models.Slug,
-            order: [['default', 'DESC']],
-          },
-        ],
-      };
+      const options = App.includeOptions;
       if (!isAdmin) {
         options.attributes = { exclude: ['status', 'notes'] };
         options.where = { status: 'accepted' };

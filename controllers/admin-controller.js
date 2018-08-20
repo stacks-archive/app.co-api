@@ -38,7 +38,7 @@ const updatableKeys = [
 ];
 
 router.post('/apps/:appId', async (req, res) => {
-  let app = await App.findOne({ where: { id: req.params.appId } });
+  let app = await App.findOne({ where: { id: req.params.appId }, ...App.includeOptions });
   console.log(`Saving ${app.name}`);
   const data = _.pick(req.body, updatableKeys);
 
