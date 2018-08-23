@@ -13,7 +13,7 @@ const uploadApp = async () => {
       },
     },
   });
-  const uploadPromises = apps.map((app) => app.uploadToGCS());
+  const uploadPromises = apps.map((app) => app.uploadToGCS({}));
   await Promise.all(uploadPromises);
   console.log('done');
   process.exit();
