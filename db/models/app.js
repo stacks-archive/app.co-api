@@ -3,6 +3,7 @@ const uuid = require('uuid/v4');
 
 const ENUMS = require('./constants/app-constants');
 const { slugify } = require('../../common/lib/utils');
+const { uploadFromURL } = require('../../common/lib/gcloud');
 
 module.exports = (sequelize, DataTypes) => {
   const App = sequelize.define(
@@ -22,12 +23,14 @@ module.exports = (sequelize, DataTypes) => {
       openSourceUrl: DataTypes.STRING,
       registrationIsOpen: DataTypes.BOOLEAN,
       trackingIsBlocked: DataTypes.BOOLEAN,
-      imageUrl: DataTypes.STRING,
       description: DataTypes.TEXT,
       twitterHandle: DataTypes.STRING,
       status: DataTypes.STRING,
       notes: DataTypes.TEXT,
       gcsImagePath: DataTypes.STRING,
+      imageUrl: {
+        type: DataTypes.STRING,
+      },
       category: {
         type: DataTypes.VIRTUAL,
         get() {
@@ -85,6 +88,14 @@ module.exports = (sequelize, DataTypes) => {
             default: true,
             appId: app.id,
           });
+        },
+        beforeSave: async (app) => {
+          const { imageUrl } = app;
+          const previous = app.previous('imageUrl');
+          if (imageUrl !== previous) {
+            await app.uploadToGCS({ save: false });
+          }
+          return true;
         },
       },
     },
@@ -151,9 +162,34 @@ module.exports = (sequelize, DataTypes) => {
             appId: this.id,
           });
           return resolve();
-        } catch (error) {
-          reject(error);
+        } catch (err2) {
+          reject(err2);
         }
+      }
+    });
+  };
+
+  App.prototype.uploadToGCS = function uploadToGCS({ save = true }) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { imageUrl } = this;
+        if (imageUrl && imageUrl.length !== 0) {
+          console.log(`Uploading image for ${this.name}`);
+          // console.log(this.gcsImagePath);
+          const file = await uploadFromURL(imageUrl);
+          if (!file) {
+            return resolve();
+          }
+          this.gcsImagePath = file.name;
+          if (save) {
+            await this.save();
+          }
+          // console.log(this.name, this.imgixImageUrl);
+          return resolve();
+        }
+        return resolve();
+      } catch (error) {
+        return reject(error);
       }
     });
   };
