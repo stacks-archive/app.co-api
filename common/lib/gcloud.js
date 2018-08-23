@@ -19,7 +19,13 @@ const setup = async () => {
 const uploadFromURL = (url) =>
   new Promise(async (resolve, reject) => {
     try {
-      const buffer = await request(url, { encoding: null });
+      let buffer;
+      try {
+        buffer = await request(url, { encoding: null });
+      } catch (error) {
+        console.log(`Skipping upload of ${url} because request failed.`);
+        return resolve();
+      }
       const id = uuid();
       const filename = path.join(__dirname, '..', '..', 'tmp', id);
 

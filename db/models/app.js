@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       twitterHandle: DataTypes.STRING,
       status: DataTypes.STRING,
       notes: DataTypes.TEXT,
+      gcsImagePath: DataTypes.STRING,
       category: {
         type: DataTypes.VIRTUAL,
         get() {
@@ -61,6 +62,16 @@ module.exports = (sequelize, DataTypes) => {
         },
         set(value) {
           this.setDataValue('authenticationID', ENUMS.authenticationEnums[value]);
+        },
+      },
+      imgixImageUrl: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          const { gcsImagePath } = this;
+          if (gcsImagePath) {
+            return `https://appco.imgix.net/${gcsImagePath.slice(7)}`;
+          }
+          return null;
         },
       },
     },
