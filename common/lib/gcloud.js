@@ -12,6 +12,8 @@ const storage = new Storage({});
 const setup = async () => {
   const jsonCreds = process.env.GCS_JSON;
   const credsPath = path.join(__dirname, '..', '..', 'gcs.json');
+  console.log(credsPath);
+  console.log(jsonCreds);
   process.env.GOOGLE_APPLICATION_CREDENTIALS = credsPath;
   await fs.outputFile(credsPath, jsonCreds);
 };

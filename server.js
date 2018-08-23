@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const { App } = require('./db/models');
 const { saveRanking } = require('./common/lib/twitter');
+const { setup } = require('./common/lib/gcloud');
 const appConstants = require('./db/models/constants/app-constants');
 const AdminController = require('./controllers/admin-controller');
 const UserController = require('./controllers/user-controller');
@@ -48,7 +49,9 @@ app.get('/api/apps', async (req, res) => {
   res.json({ apps, constants });
 });
 
-app.listen(port, (err) => {
-  if (err) throw err;
-  console.log(`> Ready on http://localhost:${port}`);
+setup().then(() => {
+  app.listen(port, (err) => {
+    if (err) throw err;
+    console.log(`> Ready on http://localhost:${port}`);
+  });
 });

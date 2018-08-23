@@ -105,7 +105,8 @@
     "ignore": [
       ".next/*",
       ".next",
-      "pages/*"
+      "pages/*",
+      "gcs.json"
     ]
   },
   "engines": {
