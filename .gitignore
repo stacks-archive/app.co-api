@@ -11,3 +11,5 @@ yarn-error.log
 .vscode
 .DS_Store
 tmp
+gcs.json
+_gcs.json
