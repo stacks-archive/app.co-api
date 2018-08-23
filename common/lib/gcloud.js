@@ -5,15 +5,11 @@ const fs = require('fs-extra');
 const uuid = require('uuid/v4');
 const path = require('path');
 
-const oauthClient = new google.auth.OAuth2(process.env.GCS_KEY, process.env.GCS_SECRET);
-
 const storage = new Storage({});
 
 const setup = async () => {
   const jsonCreds = process.env.GCS_JSON;
   const credsPath = path.join(__dirname, '..', '..', 'gcs.json');
-  console.log(credsPath);
-  console.log(jsonCreds);
   process.env.GOOGLE_APPLICATION_CREDENTIALS = credsPath;
   await fs.outputFile(credsPath, jsonCreds);
 };
@@ -36,6 +32,7 @@ const uploadFromURL = (url) =>
       const options = {
         destination: gcsPath,
         public: true,
+        resumable: false,
       };
       const file = await storage.bucket(process.env.GCS_BUCKET).upload(filename, options);
       return resolve(file[0]);
