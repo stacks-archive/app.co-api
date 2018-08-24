@@ -106,7 +106,8 @@
       ".next/*",
       ".next",
       "pages/*",
-      "gcs.json"
+      "gcs.json",
+      "tmp/*"
     ]
   },
   "engines": {
