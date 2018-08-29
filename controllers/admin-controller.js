@@ -41,6 +41,7 @@ router.post('/apps/:appId', async (req, res) => {
   let app = await App.findOne({ ...App.includeOptions, where: { id: req.params.appId } });
   console.log(`Saving ${app.name}`);
   const data = _.pick(req.body, updatableKeys);
+  console.log(data);
 
   app = await app.update(data);
   await clearCache();

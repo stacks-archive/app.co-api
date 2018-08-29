@@ -5,6 +5,14 @@ const ENUMS = require('./constants/app-constants');
 const { slugify } = require('../../common/lib/utils');
 const { uploadFromURL } = require('../../common/lib/gcloud');
 
+const getEnumOrNull = (enums, value) => {
+  const id = enums[value];
+  if (typeof id === 'undefined') {
+    return null;
+  }
+  return id;
+};
+
 module.exports = (sequelize, DataTypes) => {
   const App = sequelize.define(
     'App',
@@ -46,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
           return ENUMS.blockchainIDToEnum[this.get('blockchainID')];
         },
         set(value) {
-          this.setDataValue('blockchainID', ENUMS.blockchainEnums[value]);
+          this.setDataValue('blockchainID', getEnumOrNull(ENUMS.blockchainEnums, value));
         },
       },
       storageNetwork: {
@@ -55,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
           return ENUMS.storageIDToEnum[this.get('storageNetworkID')];
         },
         set(value) {
-          this.setDataValue('storageNetworkID', ENUMS.storageEnums[value]);
+          this.setDataValue('storageNetworkID', getEnumOrNull(ENUMS.storageEnums, value));
         },
       },
       authentication: {
@@ -64,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
           return ENUMS.authenticationIDToEnum[this.get('authenticationID')];
         },
         set(value) {
-          this.setDataValue('authenticationID', ENUMS.authenticationEnums[value]);
+          this.setDataValue('authenticationID', getEnumOrNull(ENUMS.authenticationEnums, value));
         },
       },
       imgixImageUrl: {
