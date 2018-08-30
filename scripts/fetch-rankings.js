@@ -34,7 +34,8 @@ const findOrFetchWebTrafficData = async (app) => {
   }
   console.log(`Fetching fresh web traffic rankings for ${app.name}`);
   try {
-    return getAppTrafficData(app);
+    const trafficData = await getAppTrafficData(app);
+    return trafficData;
   } catch (error) {
     console.log(error);
     return true;
