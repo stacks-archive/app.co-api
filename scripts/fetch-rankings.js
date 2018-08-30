@@ -1,16 +1,51 @@
 const Promise = require('bluebird');
+const moment = require('moment');
+const { Op } = require('sequelize');
 require('dotenv').config();
 
-const { App } = require('../db/models');
+const { App, Ranking } = require('../db/models');
 const { saveRanking } = require('../common/lib/twitter');
 const { getAppTrafficData } = require('../common/lib/similarweb');
 const { clearCache } = require('../common/lib/utils');
+
+const findOrFetchWebTrafficData = async (app) => {
+  const existingRanking = await Ranking.findOne({
+    where: {
+      appId: app.id,
+      date: {
+        [Op.gte]: moment()
+          .startOf('month')
+          .add(1, 'day')._d,
+        [Op.lt]: moment().endOf('month')._d,
+      },
+      monthlyVisitsCount: {
+        [Op.ne]: null,
+      },
+    },
+  });
+  if (existingRanking) {
+    console.log(`Using existing web traffic rankings for ${app.name}`);
+    return {
+      visits: existingRanking.monthlyVisitsCount,
+      bounceRate: existingRanking.monthlyBounceRate,
+      pageViews: existingRanking.monthlyPageViews,
+      visitDuration: existingRanking.monthlyVisitDuration,
+    };
+  }
+  console.log(`Fetching fresh web traffic rankings for ${app.name}`);
+  try {
+    return getAppTrafficData(app);
+  } catch (error) {
+    console.log(error);
+    return true;
+  }
+};
 
 const saveAllRankings = (app) =>
   new Promise(async (resolve, reject) => {
     try {
       const ranking = await saveRanking(app);
-      const { visits, bounceRate, pageViews, visitDuration } = await getAppTrafficData(app);
+      const { visits, bounceRate, pageViews, visitDuration } = await findOrFetchWebTrafficData(app);
       ranking.monthlyVisitsCount = visits;
       ranking.monthlyBounceRate = bounceRate;
       ranking.monthlyPageViews = pageViews;

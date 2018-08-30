@@ -27,7 +27,7 @@ const getEndpoint = (domain, endpoint) =>
       return resolve(data[key][0][key]);
     } catch (error) {
       console.log(error);
-      return reject(error.error.meta.error_message);
+      return reject(error);
     }
   });
 
