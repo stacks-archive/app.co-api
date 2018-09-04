@@ -36,6 +36,8 @@ module.exports = (sequelize, DataTypes) => {
       status: DataTypes.STRING,
       notes: DataTypes.TEXT,
       gcsImagePath: DataTypes.STRING,
+      isKYCVerified: DataTypes.BOOLEAN,
+      BTCAddress: DataTypes.STRING,
       imageUrl: {
         type: DataTypes.STRING,
       },

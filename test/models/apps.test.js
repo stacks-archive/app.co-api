@@ -63,8 +63,8 @@ describe('enums', () => {
     expect(app.authenticationID).toEqual(App.authenticationEnums.Blockstack);
     expect(app.authenticationID).not.toBeNull();
     expect(app.authentication).toEqual('Blockstack');
-    app.authentication = 'Ethereum Web3';
-    expect(app.authenticationID).toEqual(App.authenticationEnums['Ethereum Web3']);
+    app.authentication = 'Ethereum';
+    expect(app.authenticationID).toEqual(App.authenticationEnums.Ethereum);
   });
 });
 

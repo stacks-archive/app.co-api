@@ -2,7 +2,7 @@ const express = require('express');
 const jwt = require('express-jwt');
 const _ = require('lodash');
 
-const { App } = require('../db/models');
+const { App, MiningMonthlyReport } = require('../db/models');
 const { clearCache } = require('../common/lib/utils');
 
 const router = express.Router();
@@ -64,6 +64,11 @@ router.get('/apps/pending', async (req, res) => {
 router.get('/apps', async (req, res) => {
   const apps = await App.findAllWithRankings(true);
   res.json({ apps });
+});
+
+router.get('/monthly-reports', async (req, res) => {
+  const reports = await MiningMonthlyReport.findAll();
+  res.json({ reports });
 });
 
 module.exports = router;
