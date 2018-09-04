@@ -35,6 +35,8 @@ const updatableKeys = [
   'twitterHandle',
   'notes',
   'status',
+  'isKYCVerified',
+  'BTCAddress',
 ];
 
 router.post('/apps/:appId', async (req, res) => {

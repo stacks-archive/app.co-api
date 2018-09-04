@@ -136,7 +136,7 @@ module.exports = (sequelize, DataTypes) => {
     App.findAllWithRankings = (isAdmin = false) => {
       const options = _.cloneDeep(App.includeOptions);
       if (!isAdmin) {
-        options.attributes = { exclude: ['status', 'notes'] };
+        options.attributes = { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress'] };
         options.where = { status: 'accepted' };
       }
       return App.findAll(options);
