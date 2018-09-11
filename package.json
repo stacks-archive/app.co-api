@@ -37,6 +37,7 @@
     "next": "^6.0.0",
     "nodemailer": "^4.6.5",
     "nodemailer-sendgrid-transport": "^0.2.0",
+    "papaparse": "^4.6.0",
     "pg": "^7.4.1",
     "polished": "^1.9.2",
     "promise-queue": "^2.2.5",

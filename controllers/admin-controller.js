@@ -1,6 +1,8 @@
 const express = require('express');
 const jwt = require('express-jwt');
 const _ = require('lodash');
+const { Op } = require('sequelize');
+const papa = require('papaparse');
 
 const { App, MiningMonthlyReport, MiningReviewerReport, MiningReviewerRanking } = require('../db/models');
 const { clearCache } = require('../common/lib/utils');
@@ -145,6 +147,30 @@ router.delete('/monthly-reports/:monthId/reviewers/:id', async (req, res) => {
   await clearCache();
   // console.log(reviewer);
   res.json({ success: true });
+});
+
+router.get('/mining-ready-apps', async (req, res) => {
+  const apps = await App.findAll({
+    where: {
+      BTCAddress: {
+        [Op.or]: {
+          [Op.ne]: null,
+          [Op.ne]: '',
+        },
+      },
+      isKYCVerified: true,
+    },
+  });
+  // console.log(apps[0].dataValues);
+  const appRows = apps.map((app) => ({
+    'App Id': app.id,
+    Ranking: '',
+    'App Name': app.name,
+    Website: app.website,
+    Description: app.description,
+  }));
+  const csv = papa.unparse(appRows);
+  return res.status(200).send(csv);
 });
 
 module.exports = router;
