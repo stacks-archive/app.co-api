@@ -8,8 +8,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  MiningReviewerReport.associate = function(models) {
-    // associations can be defined here
+  MiningReviewerReport.associate = function associate(models) {
+    MiningReviewerReport.MiningReviewerRanking = MiningReviewerReport.hasMany(models.MiningReviewerRanking, {
+      foreignKey: 'reviewerId',
+      onDelete: 'CASCADE',
+    });
   };
   return MiningReviewerReport;
 };

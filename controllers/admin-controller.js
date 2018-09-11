@@ -67,10 +67,17 @@ router.get('/apps', async (req, res) => {
 });
 
 router.get('/monthly-reports', async (req, res) => {
+  console.log('getting admin apps');
   const reports = await MiningMonthlyReport.findAll({
     include: [
       {
         model: MiningReviewerReport,
+        include: [
+          {
+            model: MiningReviewerRanking,
+            include: [{ model: App }],
+          },
+        ],
       },
     ],
   });
@@ -129,6 +136,14 @@ router.post('/monthly-reports/:id', async (req, res) => {
   const data = _.pick(req.body, updateableReportKeys);
   const report = await MiningMonthlyReport.findById(req.params.id);
   await report.update(data);
+  res.json({ success: true });
+});
+
+router.delete('/monthly-reports/:monthId/reviewers/:id', async (req, res) => {
+  const reviewer = await MiningReviewerReport.findById(req.params.id);
+  await reviewer.destroy();
+  await clearCache();
+  // console.log(reviewer);
   res.json({ success: true });
 });
 
