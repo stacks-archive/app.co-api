@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const secure = require('express-force-https');
 
 require('dotenv').config();
 
@@ -11,6 +12,7 @@ const appConstants = require('./db/models/constants/app-constants');
 const AdminController = require('./controllers/admin-controller');
 const UserController = require('./controllers/user-controller');
 
+const dev = process.env.NODE_ENV !== 'production';
 const port = parseInt(process.env.PORT, 10) || 4000;
 
 const app = express();
@@ -19,6 +21,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(cors());
+
+if (!dev) {
+  app.use(secure);
+}
 
 app.use('/api/admin', AdminController);
 app.use('/api', UserController);

@@ -12,8 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  MiningMonthlyReport.associate = function(models) {
-    // associations can be defined here
+  MiningMonthlyReport.associate = function associate(models) {
+    MiningMonthlyReport.MiningReviewerReport = MiningMonthlyReport.hasMany(models.MiningReviewerReport, {
+      foreignKey: 'reportId',
+      onDelete: 'CASCADE',
+    });
   };
   return MiningMonthlyReport;
 };

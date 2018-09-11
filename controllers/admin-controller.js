@@ -2,7 +2,7 @@ const express = require('express');
 const jwt = require('express-jwt');
 const _ = require('lodash');
 
-const { App, MiningMonthlyReport } = require('../db/models');
+const { App, MiningMonthlyReport, MiningReviewerReport, MiningReviewerRanking } = require('../db/models');
 const { clearCache } = require('../common/lib/utils');
 
 const router = express.Router();
@@ -67,8 +67,60 @@ router.get('/apps', async (req, res) => {
 });
 
 router.get('/monthly-reports', async (req, res) => {
-  const reports = await MiningMonthlyReport.findAll();
+  const reports = await MiningMonthlyReport.findAll({
+    include: [
+      {
+        model: MiningReviewerReport,
+      },
+    ],
+  });
   res.json({ reports });
+});
+
+router.post('/monthly-reports/:id/upload', async (req, res) => {
+  console.log(req.params);
+  const reportId = req.params.id;
+  console.log(req.body);
+  const { reviewerName, summary, apps } = req.body;
+  // const month = await MiningMonthlyReport.findById(reportId);
+  const reviewerAttrs = {
+    reportId,
+    reviewerName,
+  };
+  const [reviewer] = await MiningReviewerReport.findOrCreate({
+    where: reviewerAttrs,
+    defaults: {
+      ...reviewerAttrs,
+      summary,
+    },
+  });
+  await reviewer.update({ summary });
+  const saveAppReviews = apps.map(
+    (appParams) =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const app = await App.findById(appParams.appId);
+          console.log(app);
+          const appAttrs = { appId: app.id, reviewerId: reviewer.id, reportId };
+          const [appReview] = await MiningReviewerRanking.findOrBuild({
+            where: appAttrs,
+            defaults: appAttrs,
+          });
+          await appReview.update({
+            ...appAttrs,
+            ranking: appParams.Ranking,
+          });
+          resolve(appReview);
+        } catch (error) {
+          console.log(error);
+          reject(error);
+        }
+      }),
+  );
+  const appModels = await Promise.all(saveAppReviews);
+  console.log(appModels[0].dataValues);
+  console.log(reviewer.dataValues);
+  res.json({ success: true });
 });
 
 const updateableReportKeys = ['purchaseExchangeName', 'purchasedAt', 'purchaseConversionRate', 'BTCTransactionId'];
