@@ -13,9 +13,9 @@ const saveApps = async () => {
           const [app] = await App.findOrBuild({ where: { name } });
           await app.update({
             name,
-            description: app.tagline,
-            imageUrl: app.image_url,
-            website: app.url,
+            description: appData.tagline,
+            imageUrl: appData.image_url,
+            website: appData.url,
             blockchain: 'Mobius',
           });
           console.log(app.name, app.id);
