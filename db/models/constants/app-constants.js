@@ -26,6 +26,7 @@ const blockchainEnums = {
   Steem: 3,
   'Bitcoin Cash': 4,
   Particl: 5,
+  Mobius: 6,
 };
 const blockchainIDToEnum = _.invert(blockchainEnums);
 
