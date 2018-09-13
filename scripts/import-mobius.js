@@ -1,10 +1,12 @@
 const fs = require('fs-extra');
 
 const { App } = require('../db/models');
+const { setup } = require('../common/lib/gcloud');
 
 const saveApps = async () => {
   const appJSON = await fs.readJSON('./common/data/mobius.json');
   // console.log(appJSON[0]);
+  await setup();
   const saves = appJSON.map(
     (appData) =>
       new Promise(async (resolve, reject) => {
