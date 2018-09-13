@@ -124,10 +124,17 @@ router.post('/monthly-reports/:id/upload', async (req, res) => {
   res.json({ success: true });
 });
 
-const updateableReportKeys = ['purchaseExchangeName', 'purchasedAt', 'purchaseConversionRate', 'BTCTransactionId'];
+const updateableReportKeys = [
+  'purchaseExchangeName',
+  'purchasedAt',
+  'purchaseConversionRate',
+  'BTCTransactionId',
+  'status',
+];
 
 router.post('/monthly-reports/:id', async (req, res) => {
   const data = _.pick(req.body, updateableReportKeys);
+  console.log(data);
   const report = await MiningMonthlyReport.findById(req.params.id);
   await report.update(data);
   res.json({ success: true });
