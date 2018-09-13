@@ -74,6 +74,7 @@ module.exports = (sequelize, DataTypes) => {
       ...app.dataValues,
       domain: app.domain,
       averageRanking: app.averageRanking,
+      rankings: app.rankings,
     }));
   };
   return MiningMonthlyReport;
