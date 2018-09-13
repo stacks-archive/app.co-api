@@ -69,20 +69,14 @@ router.get('/apps', async (req, res) => {
 });
 
 router.get('/monthly-reports', async (req, res) => {
-  console.log('getting admin apps');
   const reports = await MiningMonthlyReport.findAll({
-    include: [
-      {
-        model: MiningReviewerReport,
-        include: [
-          {
-            model: MiningReviewerRanking,
-            include: [{ model: App }],
-          },
-        ],
-      },
-    ],
+    include: MiningMonthlyReport.includeOptions,
   });
+  reports.forEach((report) => {
+    report.compositeRankings = report.getCompositeRankings();
+  });
+  console.log('got rankings');
+  console.log(reports[0].compositeRankings);
   res.json({ reports });
 });
 
@@ -172,5 +166,7 @@ router.get('/mining-ready-apps', async (req, res) => {
   const csv = papa.unparse(appRows);
   return res.status(200).send(csv);
 });
+
+router.get('/mining-reports/:monthId/download-rankings', async (req, res) => {});
 
 module.exports = router;
