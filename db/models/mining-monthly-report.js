@@ -46,7 +46,6 @@ module.exports = (sequelize, DataTypes) => {
   // };
 
   MiningMonthlyReport.prototype.getCompositeRankings = function getCompositeRankings() {
-    console.log('get composite rankings');
     const apps = {};
     this.MiningReviewerReports.forEach((report) => {
       report.MiningReviewerRankings.forEach(({ ranking, App }) => {

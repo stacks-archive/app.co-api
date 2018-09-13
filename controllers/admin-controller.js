@@ -75,8 +75,6 @@ router.get('/monthly-reports', async (req, res) => {
   reports.forEach((report) => {
     report.compositeRankings = report.getCompositeRankings();
   });
-  console.log('got rankings');
-  console.log(reports[0].compositeRankings);
   res.json({ reports });
 });
 
