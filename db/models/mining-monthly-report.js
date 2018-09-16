@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const URL = require('url');
+const request = require('request-promise');
 
 module.exports = (sequelize, DataTypes) => {
   const MiningMonthlyReport = sequelize.define(
@@ -18,6 +19,12 @@ module.exports = (sequelize, DataTypes) => {
           return this.getCompositeRankings();
         },
       },
+      blockExplorerUrl: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return process.env.BLOCK_EXPLORER_URL;
+        },
+      },
     },
     {},
   );
@@ -32,12 +39,24 @@ module.exports = (sequelize, DataTypes) => {
           },
         ],
       },
+      {
+        model: models.MiningAppPayout,
+      },
     ];
 
     MiningMonthlyReport.MiningReviewerReport = MiningMonthlyReport.hasMany(models.MiningReviewerReport, {
       foreignKey: 'reportId',
       onDelete: 'CASCADE',
     });
+
+    MiningMonthlyReport.MiningAppPayout = MiningMonthlyReport.hasMany(models.MiningAppPayout, {
+      foreignKey: 'reportId',
+      onDelete: 'CASCADE',
+    });
+
+    MiningMonthlyReport.App = models.App;
+
+    MiningMonthlyReport._models = models;
   };
 
   // MiningMonthlyReport.getCompositeRankings = async (id) => {
@@ -76,5 +95,53 @@ module.exports = (sequelize, DataTypes) => {
       rankings: app.rankings,
     }));
   };
+
+  MiningMonthlyReport.prototype.savePaymentInfo = async function savePaymentInfo(txId) {
+    const tx = await request({
+      uri: `${process.env.BLOCK_EXPLORER_API}/${txId}`,
+      json: true,
+    });
+
+    const savePromises = tx.outputs.map(
+      (output) =>
+        new Promise(async (resolve, reject) => {
+          try {
+            const [BTCAddress] = output.addresses;
+            const app = await MiningMonthlyReport.App.findOne({
+              where: { BTCAddress },
+            });
+            if (app) {
+              // console.log(MiningMonthlyReport.MiningAppPayout);
+              // return resolve();
+              const paymentAttrs = {
+                appId: app.id,
+                reportId: this.id,
+              };
+              // console.log(paymentAttrs);
+              const [payment] = await MiningMonthlyReport._models.MiningAppPayout.findOrBuild({
+                where: paymentAttrs,
+                defaults: paymentAttrs,
+              });
+              await payment.update({
+                ...paymentAttrs,
+                BTCPaymentValue: output.value,
+              });
+              // console.log(payment.dataValues);
+              return resolve(payment);
+            }
+            console.log('Could not find app with address:', BTCAddress);
+            return resolve();
+          } catch (error) {
+            console.log(error);
+            return reject(error);
+          }
+        }),
+    );
+
+    await Promise.all(savePromises);
+
+    // console.log(tx);
+  };
+
   return MiningMonthlyReport;
 };

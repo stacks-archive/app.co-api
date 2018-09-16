@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('MiningReviewerRankings', {
+    queryInterface.createTable('MiningAppPayouts', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,13 +10,13 @@ module.exports = {
       reportId: {
         type: Sequelize.INTEGER,
       },
-      reviewerId: {
-        type: Sequelize.INTEGER,
-      },
       appId: {
         type: Sequelize.INTEGER,
       },
-      ranking: {
+      BTCPaymentValue: {
+        type: Sequelize.INTEGER,
+      },
+      rank: {
         type: Sequelize.INTEGER,
       },
       createdAt: {
@@ -28,5 +28,5 @@ module.exports = {
         type: Sequelize.DATE,
       },
     }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('MiningReviewerRankings'),
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('MiningAppPayouts'),
 };

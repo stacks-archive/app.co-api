@@ -134,9 +134,12 @@ const updateableReportKeys = [
 
 router.post('/monthly-reports/:id', async (req, res) => {
   const data = _.pick(req.body, updateableReportKeys);
-  console.log(data);
-  const report = await MiningMonthlyReport.findById(req.params.id);
+  // console.log(data);
+  const report = await MiningMonthlyReport.findById(req.params.id, { include: MiningMonthlyReport.includeOptions });
   await report.update(data);
+  if (data.BTCTransactionId) {
+    await report.savePaymentInfo(data.BTCTransactionId);
+  }
   res.json({ success: true });
 });
 
