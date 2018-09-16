@@ -101,7 +101,10 @@ router.post('/monthly-reports/:id/upload', async (req, res) => {
       new Promise(async (resolve, reject) => {
         try {
           const app = await App.findById(appParams.appId);
-          console.log(app);
+          if (!app) {
+            return reject(new Error(`Spreadsheet contains app ID "${appParams.appId}" that fails to match.`));
+          }
+          // console.log(app);
           const appAttrs = { appId: app.id, reviewerId: reviewer.id, reportId };
           const [appReview] = await MiningReviewerRanking.findOrBuild({
             where: appAttrs,
@@ -118,10 +121,12 @@ router.post('/monthly-reports/:id/upload', async (req, res) => {
         }
       }),
   );
-  const appModels = await Promise.all(saveAppReviews);
-  console.log(appModels[0].dataValues);
-  console.log(reviewer.dataValues);
-  res.json({ success: true });
+  try {
+    await Promise.all(saveAppReviews);
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
 });
 
 const updateableReportKeys = [
