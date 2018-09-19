@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const secure = require('express-force-https');
+const { Op } = require('sequelize');
 
 require('dotenv').config();
 
@@ -50,6 +51,23 @@ app.get('/api/apps', async (req, res) => {
   const apps = await App.findAllWithRankings();
   const constants = { appConstants };
   res.json({ apps, constants });
+});
+
+app.get('/api/app-mining-apps', async (req, res) => {
+  const apps = await App.findAll({
+    where: {
+      BTCAddress: {
+        [Op.or]: {
+          [Op.ne]: null,
+          [Op.ne]: '',
+        },
+      },
+      isKYCVerified: true,
+    },
+    attributes: { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress'] },
+    status: 'accepted',
+  });
+  res.json({ apps });
 });
 
 setup().then(() => {
