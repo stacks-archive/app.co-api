@@ -25,6 +25,31 @@ module.exports = (sequelize, DataTypes) => {
           return process.env.BLOCK_EXPLORER_URL;
         },
       },
+      monthName: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return [
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December',
+          ][this.month - 1];
+        },
+      },
+      humanReadableDate: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return `${this.monthName} ${this.year}`;
+        },
+      },
     },
     {},
   );

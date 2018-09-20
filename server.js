@@ -6,7 +6,7 @@ const { Op } = require('sequelize');
 
 require('dotenv').config();
 
-const { App } = require('./db/models');
+const { App, MiningMonthlyReport } = require('./db/models');
 const { saveRanking } = require('./common/lib/twitter');
 const { setup } = require('./common/lib/gcloud');
 const appConstants = require('./db/models/constants/app-constants');
@@ -68,6 +68,16 @@ app.get('/api/app-mining-apps', async (req, res) => {
     status: 'accepted',
   });
   res.json({ apps });
+});
+
+app.get('/api/app-mining-months', async (req, res) => {
+  const months = await MiningMonthlyReport.findAll({
+    where: {
+      status: 'published',
+    },
+    include: MiningMonthlyReport.includeOptions,
+  });
+  res.json({ months });
 });
 
 setup().then(() => {
