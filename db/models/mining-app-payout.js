@@ -12,6 +12,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       BTCPaymentValue: DataTypes.INTEGER,
       rank: DataTypes.INTEGER,
+      BTC: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return this.BTCPaymentValue / 10e7;
+        },
+      },
     },
     {},
   );

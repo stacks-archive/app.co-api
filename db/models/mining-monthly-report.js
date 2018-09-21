@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const URL = require('url');
 const request = require('request-promise');
+const accounting = require('accounting');
+const moment = require('moment-timezone');
 
 module.exports = (sequelize, DataTypes) => {
   const MiningMonthlyReport = sequelize.define(
@@ -50,6 +52,32 @@ module.exports = (sequelize, DataTypes) => {
           return `${this.monthName} ${this.year}`;
         },
       },
+      totalRewardsUsd: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          if (!this.MiningAppPayouts) {
+            return null;
+          }
+          let sum = 0;
+          this.MiningAppPayouts.forEach((payout) => {
+            sum += payout.BTC * this.purchaseConversionRate;
+          });
+          return sum;
+        },
+      },
+      formattedTotalRewardsUsd: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return accounting.formatMoney(this.totalRewardsUsd);
+        },
+      },
+      friendlyPurchasedAt: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          const date = moment(this.purchasedAt).tz('America/New_York');
+          return `${date.format('MMMM D, YYYY')} at ${date.format('h:mm a')} EST`;
+        },
+      },
     },
     {},
   );
@@ -93,13 +121,13 @@ module.exports = (sequelize, DataTypes) => {
     const apps = {};
     this.MiningReviewerReports.forEach((report) => {
       report.MiningReviewerRankings.forEach(({ ranking, App }) => {
-        const app = App;
+        const app = App.get({ plain: true });
         apps[app.id] = apps[app.id] || app;
         apps[app.id].rankings = apps[app.id].rankings || [];
         apps[app.id].rankings.push(ranking);
       });
     });
-    // console.log(apps[804]);
+    const { purchaseConversionRate, MiningAppPayouts } = this;
     const sorted = _.sortBy(Object.values(apps), (app) => {
       const { rankings } = app;
       let sum = 0;
@@ -108,13 +136,25 @@ module.exports = (sequelize, DataTypes) => {
       });
       const avg = sum / rankings.length;
       const { hostname } = URL.parse(app.website);
+      let payout;
+      MiningAppPayouts.forEach((appPayout) => {
+        if (appPayout.appId === app.id) {
+          payout = appPayout;
+        }
+      });
+      console.log(payout.dataValues);
+      if (payout) {
+        app.usdRewards = purchaseConversionRate * payout.BTC;
+        app.formattedUsdRewards = accounting.formatMoney(app.usdRewards);
+      }
+      app.payout = payout;
       app.domain = hostname;
       app.averageRanking = avg;
       apps[app.id] = app;
       return avg;
     });
     return sorted.map((app) => ({
-      ...app.dataValues,
+      ...app,
       domain: app.domain,
       averageRanking: app.averageRanking,
       rankings: app.rankings,
