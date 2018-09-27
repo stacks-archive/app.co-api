@@ -158,7 +158,7 @@ module.exports = (sequelize, DataTypes) => {
       app.domain = hostname;
       app.averageRanking = avg;
       apps[app.id] = app;
-      return avg;
+      return -avg;
     });
     return sorted.map((app) => ({
       ...app,
