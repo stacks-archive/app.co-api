@@ -112,7 +112,7 @@ router.post('/monthly-reports/:id/upload', async (req, res) => {
           });
           await appReview.update({
             ...appAttrs,
-            ranking: appParams.Ranking,
+            standardScore: appParams['Final Standardized Score'],
           });
           resolve(appReview);
         } catch (error) {

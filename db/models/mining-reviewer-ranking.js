@@ -19,6 +19,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       ranking: {
         type: DataTypes.INTEGER,
+      },
+      standardScore: {
+        type: DataTypes.FLOAT,
         allowNull: false,
       },
     },

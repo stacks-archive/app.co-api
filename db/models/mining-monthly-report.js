@@ -120,19 +120,26 @@ module.exports = (sequelize, DataTypes) => {
   MiningMonthlyReport.prototype.getCompositeRankings = function getCompositeRankings() {
     const apps = {};
     this.MiningReviewerReports.forEach((report) => {
-      report.MiningReviewerRankings.forEach(({ ranking, App }) => {
+      report.MiningReviewerRankings.forEach(({ standardScore, App }) => {
         const app = App.get({ plain: true });
         apps[app.id] = apps[app.id] || app;
         apps[app.id].rankings = apps[app.id].rankings || [];
-        apps[app.id].rankings.push(ranking);
+        apps[app.id].rankings.push(standardScore);
       });
     });
     const { purchaseConversionRate, MiningAppPayouts } = this;
+    const weighted = (score) => {
+      const theta = 0.5;
+      if (score >= 0) {
+        return score ** theta;
+      }
+      return -((-score) ** theta);
+    };
     const sorted = _.sortBy(Object.values(apps), (app) => {
       const { rankings } = app;
       let sum = 0;
       rankings.forEach((ranking) => {
-        sum += ranking;
+        sum += weighted(ranking);
       });
       const avg = sum / rankings.length;
       const { hostname } = URL.parse(app.website);
@@ -142,7 +149,7 @@ module.exports = (sequelize, DataTypes) => {
           payout = appPayout;
         }
       });
-      console.log(payout.dataValues);
+      // console.log(payout.dataValues);
       if (payout) {
         app.usdRewards = purchaseConversionRate * payout.BTC;
         app.formattedUsdRewards = accounting.formatMoney(app.usdRewards);
