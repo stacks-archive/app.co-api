@@ -56,6 +56,23 @@ router.post('/subscribe', async (req, res) => {
   res.json({ success: true });
 });
 
+router.post('/blockstack-subscribe', async (req, res) => {
+  console.log('Subscribing', req.body.email);
+  const response = await subscribe(
+    req.body.email,
+    { FROM: 'blockstack.org' },
+    {
+      id: process.env.MAILIGEN_BLOCKSTACK_LIST,
+      update_existing: true,
+      double_optin: false,
+    },
+  );
+
+  console.log('Response from mailigen:', response);
+
+  res.json({ success: true });
+});
+
 router.post('/authenticate', async (req, res) => {
   const { authToken } = req.query;
   if (!authToken) {
