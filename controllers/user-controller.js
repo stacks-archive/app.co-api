@@ -1,6 +1,4 @@
 const express = require('express');
-const Mailchimp = require('mailchimp-api-v3');
-const crypto = require('crypto');
 const { verifyAuthResponse } = require('blockstack/lib/auth/authVerification');
 const { decodeToken } = require('jsontokens');
 const _ = require('lodash');
@@ -9,8 +7,7 @@ const { App, User } = require('../db/models');
 const { createToken } = require('../common/lib/auth/token');
 const { sendMail, newAppEmail } = require('../common/lib/mailer');
 const GSheets = require('../common/lib/gsheets');
-
-const mailchimp = new Mailchimp(process.env.MAILCHIMP_KEY);
+const { subscribe } = require('../common/lib/mailigen');
 
 const router = express.Router();
 
@@ -43,18 +40,8 @@ router.post('/submit', async (req, res) => {
 });
 
 router.post('/subscribe', async (req, res) => {
-  const recipientEmail = req.body.email;
-  const recipientEmailHash = crypto
-    .createHash('md5')
-    .update(recipientEmail)
-    .digest('hex');
-
-  const mailchimpUrl = `/lists/${process.env.MAILCHIMP_LIST}/members/${recipientEmailHash}`;
-  console.log(mailchimpUrl);
-  await mailchimp.put(mailchimpUrl, {
-    email_address: recipientEmail,
-    status_if_new: 'subscribed',
-  });
+  console.log('Subscribing', req.body.email);
+  await subscribe(req.body.email, { FROM: 'app.co' });
 
   res.json({ success: true });
 });
