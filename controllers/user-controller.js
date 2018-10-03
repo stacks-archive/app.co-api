@@ -2,12 +2,13 @@ const express = require('express');
 const { verifyAuthResponse } = require('blockstack/lib/auth/authVerification');
 const { decodeToken } = require('jsontokens');
 const _ = require('lodash');
+const { subscribe } = require('mailigen');
 
 const { App, User } = require('../db/models');
 const { createToken } = require('../common/lib/auth/token');
 const { sendMail, newAppEmail } = require('../common/lib/mailer');
 const GSheets = require('../common/lib/gsheets');
-const { subscribe } = require('../common/lib/mailigen');
+// const { subscribe } = require('../common/lib/mailigen');
 
 const router = express.Router();
 
@@ -41,7 +42,16 @@ router.post('/submit', async (req, res) => {
 
 router.post('/subscribe', async (req, res) => {
   console.log('Subscribing', req.body.email);
-  await subscribe(req.body.email, { FROM: 'app.co' });
+  const response = await subscribe(
+    req.body.email,
+    { FROM: 'app.co' },
+    {
+      update_existing: true,
+      double_optin: false,
+    },
+  );
+
+  console.log('Response from mailigen:', response);
 
   res.json({ success: true });
 });

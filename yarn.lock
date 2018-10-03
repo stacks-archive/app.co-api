@@ -5202,6 +5202,13 @@ mailchimp-api-v3@^1.8.1:
     request "^2.67.0"
     tar "^4.0.2"
 
+mailigen@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/mailigen/-/mailigen-1.0.1.tgz#76e732b86e345c03ba7e0b096d5ed1c99a7bb7ac"
+  dependencies:
+    request "^2.88.0"
+    request-promise "^4.2.2"
+
 make-dir@^1.0.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/make-dir/-/make-dir-1.3.0.tgz#79c1033b80515bd6d24ec9933e860ca75ee27f0c"
@@ -6669,7 +6676,7 @@ request@^2.67.0, request@^2.72.0, request@^2.83.0, request@^2.85.0:
     tunnel-agent "^0.6.0"
     uuid "^3.1.0"
 
-request@^2.81.0:
+request@^2.81.0, request@^2.88.0:
   version "2.88.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.0.tgz#9c2fca4f7d35b592efe57c7f0a55e81052124fef"
   dependencies:
