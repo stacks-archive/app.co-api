@@ -5202,9 +5202,9 @@ mailchimp-api-v3@^1.8.1:
     request "^2.67.0"
     tar "^4.0.2"
 
-mailigen@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/mailigen/-/mailigen-1.0.1.tgz#76e732b86e345c03ba7e0b096d5ed1c99a7bb7ac"
+mailigen@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/mailigen/-/mailigen-1.0.2.tgz#c996f085ba2e3f7f765d12077eeaf4d55dd8bbc5"
   dependencies:
     request "^2.88.0"
     request-promise "^4.2.2"

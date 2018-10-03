@@ -42,35 +42,37 @@ router.post('/submit', async (req, res) => {
 
 router.post('/subscribe', async (req, res) => {
   console.log('Subscribing', req.body.email);
-  const response = await subscribe(
-    req.body.email,
-    { FROM: 'app.co' },
-    {
-      update_existing: true,
-      double_optin: false,
-    },
-  );
-
-  console.log('Response from mailigen:', response);
-
-  res.json({ success: true });
+  try {
+    await subscribe(
+      req.body.email,
+      { FROM: 'app.co' },
+      {
+        update_existing: true,
+        double_optin: false,
+      },
+    );
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
 });
 
 router.post('/blockstack-subscribe', async (req, res) => {
   console.log('Subscribing', req.body.email);
-  const response = await subscribe(
-    req.body.email,
-    { FROM: 'blockstack.org' },
-    {
-      id: process.env.MAILIGEN_BLOCKSTACK_LIST,
-      update_existing: true,
-      double_optin: false,
-    },
-  );
-
-  console.log('Response from mailigen:', response);
-
-  res.json({ success: true });
+  try {
+    await subscribe(
+      req.body.email,
+      { FROM: 'blockstack.org' },
+      {
+        id: process.env.MAILIGEN_BLOCKSTACK_LIST,
+        update_existing: true,
+        double_optin: false,
+      },
+    );
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
 });
 
 router.post('/authenticate', async (req, res) => {
