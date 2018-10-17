@@ -167,6 +167,8 @@ module.exports = class GSheets {
           submission.appName,
           submission.website,
           submission.isBlockstackIntegrated,
+          submission.repo,
+          submission.appIsPublic,
         ];
 
         const sheets = google.sheets({ version: 'v4', auth: this.auth() });
