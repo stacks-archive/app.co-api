@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       purchasedAt: DataTypes.DATE,
       purchaseConversionRate: DataTypes.FLOAT,
       BTCTransactionId: DataTypes.STRING,
+      name: DataTypes.STRING,
       compositeRankings: {
         type: DataTypes.VIRTUAL,
         get() {

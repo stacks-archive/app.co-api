@@ -135,6 +135,7 @@ const updateableReportKeys = [
   'purchaseConversionRate',
   'BTCTransactionId',
   'status',
+  'name',
 ];
 
 router.post('/monthly-reports/:id', async (req, res) => {
