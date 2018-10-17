@@ -87,8 +87,19 @@ module.exports = (sequelize, DataTypes) => {
         model: models.MiningReviewerReport,
         include: [
           {
+            separate: true,
             model: models.MiningReviewerRanking,
-            include: [{ model: models.App }],
+            include: [
+              {
+                model: models.App,
+                include: [
+                  {
+                    model: models.Slug,
+                    separate: true,
+                  },
+                ],
+              },
+            ],
           },
         ],
       },
@@ -122,6 +133,11 @@ module.exports = (sequelize, DataTypes) => {
     this.MiningReviewerReports.forEach((report) => {
       report.MiningReviewerRankings.forEach(({ standardScore, App }) => {
         const app = App.get({ plain: true });
+        const [slug] = App.Slugs;
+        app.slug = slug ? slug.value : slug;
+        app.authentication = App.authentication;
+        app.storageNetwork = App.storageNetwork;
+        app.blockchain = App.blockchain;
         apps[app.id] = apps[app.id] || app;
         apps[app.id].rankings = apps[app.id].rankings || [];
         apps[app.id].rankings.push(standardScore);

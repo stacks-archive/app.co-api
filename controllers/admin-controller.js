@@ -183,10 +183,13 @@ router.get('/mining-ready-apps', async (req, res) => {
 
 router.get('/mining-reports/:monthId/download-rankings', async (req, res) => {
   const month = await MiningMonthlyReport.findById(req.params.monthId, { include: MiningMonthlyReport.includeOptions });
-  const rankings = month.compositeRankings.map((app) => ({
-    ...app,
-    rankings: app.rankings.join(','),
-  }));
+  const rankings = month.compositeRankings.map((app) => {
+    const appData = {
+      ...app,
+      rankings: app.rankings.join(','),
+    };
+    return appData;
+  });
   const csv = papa.unparse(rankings);
   return res.status(200).send(csv);
 });
