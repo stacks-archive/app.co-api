@@ -5,6 +5,7 @@ const request = require('request-promise');
 // const Queue = require('promise-queue');
 const Promise = require('bluebird');
 const { Op } = require('sequelize');
+const moment = require('moment');
 
 const { App } = require('../../db/models');
 
@@ -169,6 +170,7 @@ module.exports = class GSheets {
           submission.isBlockstackIntegrated,
           submission.repo,
           submission.appIsPublic,
+          moment().format('YYYY-MM-DD h:mm a'),
         ];
 
         const sheets = google.sheets({ version: 'v4', auth: this.auth() });
