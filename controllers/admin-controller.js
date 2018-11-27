@@ -173,6 +173,7 @@ router.get('/mining-ready-apps', async (req, res) => {
   const appRows = apps.map((app) => ({
     'App Id': app.id,
     Ranking: '',
+    CompositeScore: '',
     'App Name': app.name,
     Website: app.website,
     Description: app.description,
