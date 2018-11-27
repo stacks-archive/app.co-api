@@ -24,6 +24,7 @@ const createableKeys = [
   'storageNetwork',
   'openSourceUrl',
   'twitterHandle',
+  'contactEmail',
 ];
 
 router.post('/submit', async (req, res) => {

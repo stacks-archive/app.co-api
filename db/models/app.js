@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       gcsImagePath: DataTypes.STRING,
       isKYCVerified: DataTypes.BOOLEAN,
       BTCAddress: DataTypes.STRING,
+      contactEmail: DataTypes.STRING,
       imageUrl: {
         type: DataTypes.STRING,
       },
@@ -138,7 +139,7 @@ module.exports = (sequelize, DataTypes) => {
     App.findAllWithRankings = (isAdmin = false) => {
       const options = _.cloneDeep(App.includeOptions);
       if (!isAdmin) {
-        options.attributes = { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress'] };
+        options.attributes = { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress', 'contactEmail'] };
         options.where = { status: 'accepted' };
       }
       return App.findAll(options);
