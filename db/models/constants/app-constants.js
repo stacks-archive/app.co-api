@@ -29,6 +29,7 @@ const blockchainEnums = {
   'Bitcoin Cash': 4,
   Particl: 5,
   Mobius: 6,
+  Qtum: 7,
 };
 const blockchainIDToEnum = _.invert(blockchainEnums);
 
