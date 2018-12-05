@@ -46,7 +46,7 @@ router.post('/subscribe', async (req, res) => {
   try {
     await subscribe(
       req.body.email,
-      { FROM: 'app.co' },
+      { FROM: req.query.from || 'app.co' },
       {
         update_existing: true,
         double_optin: false,
