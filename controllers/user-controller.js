@@ -46,7 +46,7 @@ router.post('/subscribe', async (req, res) => {
   try {
     await subscribe(
       req.body.email,
-      { FROM: req.query.from || 'app.co' },
+      { FROM: 'app.co' },
       {
         update_existing: true,
         double_optin: false,
@@ -63,9 +63,9 @@ router.post('/blockstack-subscribe', async (req, res) => {
   try {
     await subscribe(
       req.body.email,
-      { FROM: 'blockstack.org' },
+      { FROM: req.body.from || 'blockstack.org' },
       {
-        id: req.query.list || process.env.MAILIGEN_BLOCKSTACK_LIST,
+        id: req.body.list || process.env.MAILIGEN_BLOCKSTACK_LIST,
         update_existing: true,
         double_optin: false,
       },
