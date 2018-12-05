@@ -65,7 +65,7 @@ router.post('/blockstack-subscribe', async (req, res) => {
       req.body.email,
       { FROM: 'blockstack.org' },
       {
-        id: process.env.MAILIGEN_BLOCKSTACK_LIST,
+        id: req.query.list || process.env.MAILIGEN_BLOCKSTACK_LIST,
         update_existing: true,
         double_optin: false,
       },
