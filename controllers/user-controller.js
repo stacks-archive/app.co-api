@@ -59,13 +59,17 @@ router.post('/subscribe', async (req, res) => {
 });
 
 router.post('/blockstack-subscribe', async (req, res) => {
-  console.log('Subscribing', req.body.email);
+  const { email, from, list, ...rest } = req.body;
+  console.log('Subscribing', email);
   try {
     await subscribe(
-      req.body.email,
-      { FROM: req.body.from || 'blockstack.org' },
+      email,
       {
-        id: req.body.list || process.env.MAILIGEN_BLOCKSTACK_LIST,
+        FROM: from || 'blockstack.org',
+        ...rest,
+      },
+      {
+        id: list || process.env.MAILIGEN_BLOCKSTACK_LIST,
         update_existing: true,
         double_optin: false,
       },
