@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const secure = require('express-force-https');
 const { Op } = require('sequelize');
+const request = require('request-promise');
 
 require('dotenv').config();
 
@@ -133,6 +134,14 @@ app.get('/api/app-mining-months', async (req, res) => {
     include: MiningMonthlyReport.includeOptions,
   });
   res.json({ months });
+});
+
+app.get('/api/mining-faq', async (req, res) => {
+  const faq = await request.get({
+    uri: 'https://docs.blockstack.org/develop/faq-data.json',
+    json: true,
+  });
+  res.json(faq);
 });
 
 setup().then(() => {
