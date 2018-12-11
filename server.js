@@ -7,6 +7,7 @@ const { Op } = require('sequelize');
 require('dotenv').config();
 
 const { App, MiningMonthlyReport } = require('./db/models');
+const ENUMS = require('./db/models/constants/app-constants');
 const { saveRanking } = require('./common/lib/twitter');
 const { setup } = require('./common/lib/gcloud');
 const appConstants = require('./db/models/constants/app-constants');
@@ -67,7 +68,61 @@ app.get('/api/app-mining-apps', async (req, res) => {
     attributes: { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress'] },
     status: 'accepted',
   });
-  res.json({ apps });
+  const months = await MiningMonthlyReport.findAll({
+    where: {
+      status: 'published',
+    },
+    include: MiningMonthlyReport.includeOptions,
+  });
+  apps.forEach((_app, i) => {
+    const a = _app.get();
+    a.miningReady = true;
+    a.lifetimeEarnings = 0;
+    apps[i] = a;
+  });
+  months.forEach((month) => {
+    const { purchaseConversionRate } = month;
+    apps.forEach((_app, i) => {
+      month.MiningAppPayouts.forEach((payout) => {
+        if (_app.id === payout.appId) {
+          _app.lifetimeEarnings += payout.BTC * purchaseConversionRate;
+          apps[i] = _app;
+        }
+      });
+    });
+    // console.log()
+  });
+  const notReady = await App.findAll({
+    where: {
+      authenticationID: ENUMS.authenticationEnums.Blockstack,
+      [Op.or]: {
+        BTCAddress: {
+          [Op.or]: {
+            [Op.eq]: null,
+            [Op.eq]: '',
+          },
+        },
+        isKYCVerified: {
+          [Op.or]: {
+            [Op.eq]: false,
+            [Op.eq]: null,
+          },
+        },
+      },
+    },
+    attributes: { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress'] },
+    status: 'accepted',
+  });
+  res.json({
+    apps: apps.concat(
+      notReady.map((_app) => {
+        const a = _app.get();
+        a.miningReady = false;
+        a.lifetimeEarnings = 0;
+        return a;
+      }),
+    ),
+  });
 });
 
 app.get('/api/app-mining-months', async (req, res) => {
