@@ -4,6 +4,7 @@ const cors = require('cors');
 const secure = require('express-force-https');
 const { Op } = require('sequelize');
 const request = require('request-promise');
+const sortBy = require('lodash/sortBy');
 
 require('dotenv').config();
 
@@ -114,15 +115,17 @@ app.get('/api/app-mining-apps', async (req, res) => {
     attributes: { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress'] },
     status: 'accepted',
   });
+  const allApps = apps.concat(
+    notReady.map((_app) => {
+      const a = _app.get();
+      a.miningReady = false;
+      a.lifetimeEarnings = 0;
+      return a;
+    }),
+  );
+  const sortedApps = sortBy(allApps, (_app) => -_app.lifetimeEarnings);
   res.json({
-    apps: apps.concat(
-      notReady.map((_app) => {
-        const a = _app.get();
-        a.miningReady = false;
-        a.lifetimeEarnings = 0;
-        return a;
-      }),
-    ),
+    apps: sortedApps,
   });
 });
 
