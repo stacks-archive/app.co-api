@@ -8,6 +8,7 @@ const { App, User } = require('../db/models');
 const { createToken } = require('../common/lib/auth/token');
 const { sendMail, newAppEmail } = require('../common/lib/mailer');
 const GSheets = require('../common/lib/gsheets');
+const { authenticationEnums } = require('../db/models/constants/app-constants');
 // const { subscribe } = require('../common/lib/mailigen');
 
 const router = express.Router();
@@ -32,6 +33,26 @@ router.post('/submit', async (req, res) => {
   appData.status = 'pending_audit';
   console.log('Request to submit app:', appData);
   try {
+    if (appData.authentication === 'Blockstack') {
+      const gsheetsData = {
+        ...appData,
+        appName: appData.name,
+        isBlockstackIntegrated: true,
+        repo: appData.openSourceUrl,
+        appIsPublic: true,
+        email: appData.contactEmail,
+      };
+      await GSheets.appendAppMiningSubmission(gsheetsData);
+      await subscribe(
+        appData.contactEmail,
+        { SOURCE: 'app.co submission' },
+        {
+          id: 'e36d5dc9',
+          update_existing: true,
+          double_optin: false,
+        },
+      );
+    }
     const app = await App.create(appData);
     sendMail(newAppEmail(app));
     res.json({ success: true, app });
