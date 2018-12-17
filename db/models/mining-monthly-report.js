@@ -199,7 +199,7 @@ module.exports = (sequelize, DataTypes) => {
             const app = await MiningMonthlyReport.App.findOne({
               where: {
                 BTCAddress: {
-                  $iLike: BTCAddress,
+                  [sequelize.Op.iLike]: BTCAddress,
                 },
               },
             });
