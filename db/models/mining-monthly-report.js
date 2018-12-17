@@ -195,6 +195,7 @@ module.exports = (sequelize, DataTypes) => {
       (output) =>
         new Promise(async (resolve, reject) => {
           try {
+            console.log('Finding app with BTC Address', output.addresses[0]);
             const [BTCAddress] = output.addresses;
             const app = await MiningMonthlyReport.App.findOne({
               where: {
