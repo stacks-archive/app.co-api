@@ -187,7 +187,7 @@ module.exports = (sequelize, DataTypes) => {
 
   MiningMonthlyReport.prototype.savePaymentInfo = async function savePaymentInfo(txId) {
     const tx = await request({
-      uri: `${process.env.BLOCK_EXPLORER_API}/${txId}`,
+      uri: `${process.env.BLOCK_EXPLORER_API}/${txId}?limit=1000`,
       json: true,
     });
 
