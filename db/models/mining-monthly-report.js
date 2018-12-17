@@ -204,6 +204,7 @@ module.exports = (sequelize, DataTypes) => {
               },
             });
             if (app) {
+              console.log('Making payout for', app.name);
               // console.log(MiningMonthlyReport.MiningAppPayout);
               // return resolve();
               const paymentAttrs = {
@@ -219,7 +220,7 @@ module.exports = (sequelize, DataTypes) => {
                 ...paymentAttrs,
                 BTCPaymentValue: output.value,
               });
-              // console.log(payment.dataValues);
+              console.log(payment.dataValues);
               return resolve(payment);
             }
             console.log('Could not find app with address:', BTCAddress);
