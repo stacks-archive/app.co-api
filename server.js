@@ -58,6 +58,7 @@ app.get('/api/apps', async (req, res) => {
 
 app.get('/api/app-mining-apps', async (req, res) => {
   const apps = await App.findAll({
+    ...App.includeOptions,
     where: {
       BTCAddress: {
         [Op.or]: {
@@ -95,6 +96,7 @@ app.get('/api/app-mining-apps', async (req, res) => {
     // console.log()
   });
   const notReady = await App.findAll({
+    ...App.includeOptions,
     where: {
       authenticationID: ENUMS.authenticationEnums.Blockstack,
       [Op.or]: {
