@@ -83,6 +83,11 @@ router.post('/blockstack-subscribe', async (req, res) => {
   const { email, from, list, ...rest } = req.body;
   console.log('Subscribing', email);
   try {
+    if (list === 'e36d5dc9') {
+      await GSheets.appendAppMiningSubmission({
+        email,
+      });
+    }
     await subscribe(
       email,
       {
