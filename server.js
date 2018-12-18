@@ -100,10 +100,10 @@ app.get('/api/app-mining-apps', async (req, res) => {
   });
   const notReady = await App.findAll({
     ...App.includeOptions,
-    categoryID: {
-      [Op.ne]: ENUMS.categoryEnums['Sample Blockstack Apps'],
-    },
     where: {
+      categoryID: {
+        [Op.ne]: ENUMS.categoryEnums['Sample Blockstack Apps'],
+      },
       authenticationID: ENUMS.authenticationEnums.Blockstack,
       [Op.or]: {
         BTCAddress: {
