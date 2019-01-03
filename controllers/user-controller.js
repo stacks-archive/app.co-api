@@ -36,7 +36,7 @@ router.post('/submit', async (req, res) => {
     if (appData.authentication === 'Blockstack') {
       const gsheetsData = {
         ...appData,
-        appName: appData.name,
+        appName: appData.appName,
         isBlockstackIntegrated: true,
         repo: appData.openSourceUrl,
         appIsPublic: true,
@@ -53,7 +53,10 @@ router.post('/submit', async (req, res) => {
         },
       );
     }
-    const app = await App.create(appData);
+    const app = await App.create({
+      ...appData,
+      name: appData.appName,
+    });
     sendMail(newAppEmail(app));
     res.json({ success: true, app });
   } catch (error) {
