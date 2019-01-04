@@ -178,6 +178,7 @@ router.get('/mining-ready-apps', async (req, res) => {
     Website: app.website,
     Description: app.description,
     'Image Url': app.imgixImageUrl,
+    Email: app.contactEmail,
   }));
   const csv = papa.unparse(appRows);
   return res.status(200).send(csv);
