@@ -26,6 +26,7 @@ const createableKeys = [
   'openSourceUrl',
   'twitterHandle',
   'contactEmail',
+  'appName',
 ];
 
 router.post('/submit', async (req, res) => {
