@@ -37,6 +37,7 @@ router.post('/submit', async (req, res) => {
     if (appData.authentication === 'Blockstack') {
       const gsheetsData = {
         ...appData,
+        firstName: appData.name,
         appName: appData.appName,
         isBlockstackIntegrated: true,
         repo: appData.openSourceUrl,

@@ -164,7 +164,7 @@ module.exports = class GSheets {
         const rows = [
           submission.firstName,
           submission.lastName,
-          submission.email,
+          submission.contactEmail,
           submission.appName,
           submission.website,
           submission.isBlockstackIntegrated,
