@@ -30,6 +30,7 @@ const blockchainEnums = {
   Particl: 5,
   Mobius: 6,
   Qtum: 7,
+  Tron: 8,
 };
 const blockchainIDToEnum = _.invert(blockchainEnums);
 
