@@ -39,6 +39,9 @@ module.exports = (sequelize, DataTypes) => {
       isKYCVerified: DataTypes.BOOLEAN,
       BTCAddress: DataTypes.STRING,
       contactEmail: DataTypes.STRING,
+      submitterName: DataTypes.STRING,
+      referralSource: DataTypes.STRING,
+      isSubmittingOwnApp: DataTypes.BOOLEAN,
       imageUrl: {
         type: DataTypes.STRING,
       },

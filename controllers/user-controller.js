@@ -26,7 +26,9 @@ const createableKeys = [
   'openSourceUrl',
   'twitterHandle',
   'contactEmail',
-  'appName',
+  'submitterName',
+  'isSubmittingOwnApp',
+  'referralSource',
 ];
 
 router.post('/submit', async (req, res) => {
@@ -37,8 +39,8 @@ router.post('/submit', async (req, res) => {
     if (appData.authentication === 'Blockstack') {
       const gsheetsData = {
         ...appData,
-        firstName: appData.name,
-        appName: appData.appName,
+        firstName: appData.submitterName,
+        appName: appData.name,
         isBlockstackIntegrated: true,
         repo: appData.openSourceUrl,
         appIsPublic: true,
@@ -57,7 +59,6 @@ router.post('/submit', async (req, res) => {
     }
     const app = await App.create({
       ...appData,
-      name: appData.appName,
     });
     sendMail(newAppEmail(app));
     res.json({ success: true, app });
