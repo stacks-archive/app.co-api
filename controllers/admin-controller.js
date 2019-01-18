@@ -104,7 +104,7 @@ router.post('/monthly-reports/:id/upload', async (req, res) => {
       new Promise(async (resolve, reject) => {
         try {
           const dev = process.env.API_ENV !== 'production';
-          const idAttr = dev ? 'productionId' : 'appId';
+          const idAttr = dev ? 'productionId' : 'id';
           const app = await App.findOne({ where: { [idAttr]: appParams.appId } });
           if (!app) {
             if (dev) {
