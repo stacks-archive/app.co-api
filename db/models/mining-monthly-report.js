@@ -250,7 +250,7 @@ module.exports = (sequelize, DataTypes) => {
               });
               await payment.update({
                 ...paymentAttrs,
-                BTCPaymentValue: output.value * 10e-9,
+                BTCPaymentValue: output.value,
               });
               console.log(payment.dataValues);
               return resolve(payment);
