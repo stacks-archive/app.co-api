@@ -42,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       submitterName: DataTypes.STRING,
       referralSource: DataTypes.STRING,
       isSubmittingOwnApp: DataTypes.BOOLEAN,
+      productionId: DataTypes.INTEGER,
       imageUrl: {
         type: DataTypes.STRING,
       },
