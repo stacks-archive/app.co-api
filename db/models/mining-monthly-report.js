@@ -221,12 +221,13 @@ module.exports = (sequelize, DataTypes) => {
       json: true,
     });
 
-    const savePromises = tx.outputs.map(
+    const savePromises = tx.out.map(
       (output) =>
         new Promise(async (resolve, reject) => {
           try {
             console.log('Finding app with BTC Address', output.addresses[0]);
-            const [BTCAddress] = output.addresses;
+            // const [BTCAddress] = output.addresses;
+            const BTCAddress = output.addr;
             const app = await MiningMonthlyReport.App.findOne({
               where: {
                 BTCAddress: {
@@ -249,7 +250,7 @@ module.exports = (sequelize, DataTypes) => {
               });
               await payment.update({
                 ...paymentAttrs,
-                BTCPaymentValue: output.value,
+                BTCPaymentValue: output.value * 10e-9,
               });
               console.log(payment.dataValues);
               return resolve(payment);
