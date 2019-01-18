@@ -3,6 +3,7 @@ const URL = require('url');
 const request = require('request-promise');
 const accounting = require('accounting');
 const moment = require('moment-timezone');
+const { Op } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const MiningMonthlyReport = sequelize.define(
@@ -16,12 +17,6 @@ module.exports = (sequelize, DataTypes) => {
       purchaseConversionRate: DataTypes.FLOAT,
       BTCTransactionId: DataTypes.STRING,
       name: DataTypes.STRING,
-      compositeRankings: {
-        type: DataTypes.VIRTUAL,
-        get() {
-          return this.getCompositeRankings();
-        },
-      },
       blockExplorerUrl: {
         type: DataTypes.VIRTUAL,
         get() {
@@ -130,59 +125,94 @@ module.exports = (sequelize, DataTypes) => {
   // };
 
   MiningMonthlyReport.prototype.getCompositeRankings = function getCompositeRankings() {
-    const apps = {};
-    this.MiningReviewerReports.forEach((report) => {
-      report.MiningReviewerRankings.forEach(({ standardScore, App }) => {
-        const app = App.get({ plain: true });
-        const [slug] = App.Slugs;
-        app.slug = slug ? slug.value : slug;
-        app.authentication = App.authentication;
-        app.storageNetwork = App.storageNetwork;
-        app.blockchain = App.blockchain;
-        apps[app.id] = apps[app.id] || app;
-        apps[app.id].rankings = apps[app.id].rankings || [];
-        apps[app.id].rankings.push(standardScore);
+    const monthlyReport = this;
+    return new Promise(async (resolve) => {
+      const apps = {};
+      const monthBy = monthlyReport.month === 1 ? 13 : monthlyReport.month;
+      const yearBy = monthlyReport.month === 1 ? monthlyReport.year - 1 : monthlyReport.year;
+      let lastReport = await MiningMonthlyReport.findOne({
+        include: MiningMonthlyReport.includeOptions,
+        where: {
+          month: {
+            [Op.lt]: monthBy,
+          },
+          year: {
+            [Op.lte]: yearBy,
+          },
+        },
+        order: [['year', 'desc'], ['month', 'desc']],
       });
-    });
-    const { purchaseConversionRate, MiningAppPayouts } = this;
-    const weighted = (score) => {
-      const theta = 0.5;
-      if (score >= 0) {
-        return score ** theta;
+      // only use memory function for after december 2018
+      if (lastReport && lastReport.month <= 11 && lastReport.year <= 2018) {
+        lastReport = null;
       }
-      return -((-score) ** theta);
-    };
-    const sorted = _.sortBy(Object.values(apps), (app) => {
-      const { rankings } = app;
-      let sum = 0;
-      rankings.forEach((ranking) => {
-        sum += weighted(ranking);
+      if (lastReport) {
+        lastReport.compositeRankings = await lastReport.getCompositeRankings();
+      }
+      monthlyReport.MiningReviewerReports.forEach((report) => {
+        report.MiningReviewerRankings.forEach(({ standardScore, App }) => {
+          const app = App.get({ plain: true });
+          const [slug] = App.Slugs;
+          app.slug = slug ? slug.value : slug;
+          app.authentication = App.authentication;
+          app.storageNetwork = App.storageNetwork;
+          app.blockchain = App.blockchain;
+          apps[app.id] = apps[app.id] || app;
+          apps[app.id].rankings = apps[app.id].rankings || [];
+          apps[app.id].rankings.push(standardScore);
+        });
       });
-      const avg = sum / rankings.length;
-      const { hostname } = URL.parse(app.website);
-      let payout;
-      MiningAppPayouts.forEach((appPayout) => {
-        if (appPayout.appId === app.id) {
-          payout = appPayout;
+      const { purchaseConversionRate, MiningAppPayouts } = monthlyReport;
+      const weighted = (score) => {
+        const theta = 0.5;
+        if (score >= 0) {
+          return score ** theta;
         }
+        return -((-score) ** theta);
+      };
+      const sorted = _.sortBy(Object.values(apps), (app) => {
+        const { rankings } = app;
+        let sum = 0;
+        rankings.forEach((ranking) => {
+          sum += weighted(ranking);
+        });
+        const avg = sum / rankings.length;
+        const { hostname } = URL.parse(app.website);
+        let payout;
+        MiningAppPayouts.forEach((appPayout) => {
+          if (appPayout.appId === app.id) {
+            payout = appPayout;
+          }
+        });
+        if (payout) {
+          app.usdRewards = purchaseConversionRate * payout.BTC;
+          app.formattedUsdRewards = accounting.formatMoney(app.usdRewards);
+        }
+        app.payout = payout;
+        app.domain = hostname;
+        app.averageRanking = avg;
+        app.memoryRanking = avg;
+        if (lastReport) {
+          lastReport.compositeRankings.forEach((previousApp) => {
+            if (app.id === previousApp.id) {
+              app.previousScore = previousApp.memoryRanking;
+              console.log('Found previous rank for', app.name, previousApp.averageRanking);
+              app.memoryRanking = (5 * app.averageRanking + 4 * previousApp.averageRanking) / 9;
+            }
+          });
+        }
+        apps[app.id] = app;
+        return -app.memoryRanking;
       });
-      // console.log(payout.dataValues);
-      if (payout) {
-        app.usdRewards = purchaseConversionRate * payout.BTC;
-        app.formattedUsdRewards = accounting.formatMoney(app.usdRewards);
-      }
-      app.payout = payout;
-      app.domain = hostname;
-      app.averageRanking = avg;
-      apps[app.id] = app;
-      return -avg;
+      return resolve(
+        sorted.map((app) => ({
+          ...app,
+          domain: app.domain,
+          averageRanking: app.averageRanking,
+          rankings: app.rankings,
+        })),
+      );
     });
-    return sorted.map((app) => ({
-      ...app,
-      domain: app.domain,
-      averageRanking: app.averageRanking,
-      rankings: app.rankings,
-    }));
   };
 
   MiningMonthlyReport.prototype.savePaymentInfo = async function savePaymentInfo(txId) {

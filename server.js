@@ -5,6 +5,7 @@ const secure = require('express-force-https');
 const { Op } = require('sequelize');
 const request = require('request-promise');
 const sortBy = require('lodash/sortBy');
+const Promise = require('bluebird');
 
 require('dotenv').config();
 
@@ -74,11 +75,15 @@ app.get('/api/app-mining-apps', async (req, res) => {
     attributes: { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress'] },
     status: 'accepted',
   });
-  const months = await MiningMonthlyReport.findAll({
+  let months = await MiningMonthlyReport.findAll({
     where: {
       status: 'published',
     },
     include: MiningMonthlyReport.includeOptions,
+  });
+  months = await Promise.map(months, async (report) => {
+    report.compositeRankings = await report.getCompositeRankings();
+    return report;
   });
   apps.forEach((_app, i) => {
     const a = _app.get();
@@ -138,11 +143,16 @@ app.get('/api/app-mining-apps', async (req, res) => {
 });
 
 app.get('/api/app-mining-months', async (req, res) => {
-  const months = await MiningMonthlyReport.findAll({
+  let months = await MiningMonthlyReport.findAll({
     where: {
       status: 'published',
     },
     include: MiningMonthlyReport.includeOptions,
+  });
+  months = await Promise.map(months, async (report) => {
+    const month = report.get();
+    month.compositeRankings = await report.getCompositeRankings();
+    return month;
   });
   res.json({ months });
 });

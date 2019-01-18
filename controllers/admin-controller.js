@@ -3,6 +3,7 @@ const jwt = require('express-jwt');
 const _ = require('lodash');
 const { Op } = require('sequelize');
 const papa = require('papaparse');
+const Promise = require('bluebird');
 
 const { App, MiningMonthlyReport, MiningReviewerReport, MiningReviewerRanking } = require('../db/models');
 const { clearCache } = require('../common/lib/utils');
@@ -69,11 +70,13 @@ router.get('/apps', async (req, res) => {
 });
 
 router.get('/monthly-reports', async (req, res) => {
-  const reports = await MiningMonthlyReport.findAll({
+  let reports = await MiningMonthlyReport.findAll({
     include: MiningMonthlyReport.includeOptions,
   });
-  reports.forEach((report) => {
-    report.compositeRankings = report.getCompositeRankings();
+  reports = await Promise.map(reports, async (report) => {
+    const month = report.get();
+    month.compositeRankings = await report.getCompositeRankings();
+    return month;
   });
   res.json({ reports });
 });
@@ -100,11 +103,15 @@ router.post('/monthly-reports/:id/upload', async (req, res) => {
     (appParams) =>
       new Promise(async (resolve, reject) => {
         try {
-          const app = await App.findById(appParams.appId);
+          const dev = process.env.API_ENV !== 'production';
+          const idAttr = dev ? 'productionId' : 'appId';
+          const app = await App.findOne({ where: { [idAttr]: appParams.appId } });
           if (!app) {
+            if (dev) {
+              return resolve();
+            }
             return reject(new Error(`Spreadsheet contains app ID "${appParams.appId}" that fails to match.`));
           }
-          // console.log(app);
           const appAttrs = { appId: app.id, reviewerId: reviewer.id, reportId };
           const [appReview] = await MiningReviewerRanking.findOrBuild({
             where: appAttrs,
@@ -186,6 +193,7 @@ router.get('/mining-ready-apps', async (req, res) => {
 
 router.get('/mining-reports/:monthId/download-rankings', async (req, res) => {
   const month = await MiningMonthlyReport.findById(req.params.monthId, { include: MiningMonthlyReport.includeOptions });
+  month.compositeRankings = await month.getCompositeRankings();
   const rankings = month.compositeRankings.map((app) => {
     const appData = {
       ...app,
