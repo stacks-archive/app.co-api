@@ -17,13 +17,18 @@ const setup = async () => {
 const uploadFromURL = (url) =>
   new Promise(async (resolve, reject) => {
     try {
-      let buffer;
+      let response;
       try {
-        buffer = await request(url, { encoding: null });
+        response = await request(url, {
+          encoding: null,
+          timeout: 10000,
+          resolveWithFullResponse: true,
+        });
       } catch (error) {
         console.log(`Skipping upload of ${url} because request failed.`);
         return resolve();
       }
+      const buffer = response.body;
       const id = uuid();
       const filename = path.join(__dirname, '..', '..', 'tmp', id);
 
@@ -33,6 +38,9 @@ const uploadFromURL = (url) =>
         destination: gcsPath,
         public: true,
         resumable: false,
+        metadata: {
+          contentType: response.headers['content-type'],
+        },
       };
       const file = await storage.bucket(process.env.GCS_BUCKET).upload(filename, options);
       return resolve(file[0]);
