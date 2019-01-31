@@ -56,6 +56,12 @@ router.post('/submit', async (req, res) => {
           double_optin: false,
         },
       );
+    } else {
+      await GSheets.appendAppCoSubmission({
+        ...appData,
+        isBlockstackIntegrated: false,
+        appIsPublic: true,
+      });
     }
     const app = await App.create({
       ...appData,

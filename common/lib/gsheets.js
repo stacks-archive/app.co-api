@@ -164,8 +164,8 @@ module.exports = class GSheets {
         const rows = [
           submission.firstName,
           submission.lastName,
-          submission.contactEmail,
           submission.appName,
+          submission.contactEmail,
           submission.website,
           submission.isBlockstackIntegrated,
           submission.repo,
@@ -177,6 +177,39 @@ module.exports = class GSheets {
         console.log('Appending row to app mining submissions:', rows);
         const sheetOptions = {
           spreadsheetId: process.env.APP_MINING_SPREADSHEET_ID,
+          range: 'Submissions!A1:N1',
+          resource: {
+            values: [rows],
+          },
+          valueInputOption: 'USER_ENTERED',
+        };
+        const appendResponse = await sheets.spreadsheets.values.append(sheetOptions);
+        resolve(appendResponse);
+      } catch (error) {
+        console.log('Error when appending app submission to gsheets:', error);
+        reject(error);
+      }
+    });
+  }
+
+  static appendAppCoSubmission(submission) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const rows = [
+          submission.submitterName,
+          submission.name,
+          submission.contactEmail,
+          submission.website,
+          submission.isBlockstackIntegrated,
+          submission.openSourceUrl,
+          submission.appIsPublic,
+          moment().format('YYYY-MM-DD h:mm a'),
+        ];
+
+        const sheets = google.sheets({ version: 'v4', auth: this.auth() });
+        console.log('Appending row to app mining submissions:', rows);
+        const sheetOptions = {
+          spreadsheetId: process.env.APP_CO_SPREADSHEET_ID,
           range: 'Submissions!A1:N1',
           resource: {
             values: [rows],
