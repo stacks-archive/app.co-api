@@ -8,10 +8,13 @@ const { App, User } = require('../db/models');
 const { createToken } = require('../common/lib/auth/token');
 const { sendMail, newAppEmail } = require('../common/lib/mailer');
 const GSheets = require('../common/lib/gsheets');
+const registerViralLoops = require('../common/lib/viral-loops');
 const { authenticationEnums } = require('../db/models/constants/app-constants');
 // const { subscribe } = require('../common/lib/mailigen');
 
 const router = express.Router();
+
+const prod = process.env.NODE_ENV === 'production';
 
 const createableKeys = [
   'name',
@@ -46,7 +49,9 @@ router.post('/submit', async (req, res) => {
         appIsPublic: true,
         email: appData.contactEmail,
       };
-      await GSheets.appendAppMiningSubmission(gsheetsData);
+      if (prod) {
+        await GSheets.appendAppMiningSubmission(gsheetsData);
+      }
       await subscribe(
         appData.contactEmail,
         { SOURCE: 'app.co submission' },
@@ -56,7 +61,7 @@ router.post('/submit', async (req, res) => {
           double_optin: false,
         },
       );
-    } else {
+    } else if (prod) {
       await GSheets.appendAppCoSubmission({
         ...appData,
         isBlockstackIntegrated: false,
@@ -67,6 +72,14 @@ router.post('/submit', async (req, res) => {
       ...appData,
     });
     sendMail(newAppEmail(app));
+    const { refSource, referralCode } = req.body;
+    if (referralCode) {
+      try {
+        await registerViralLoops(app, referralCode, refSource);
+      } catch (error) {
+        console.error('Error when registering for viral loops:', error);
+      }
+    }
     res.json({ success: true, app });
   } catch (error) {
     console.log(error);

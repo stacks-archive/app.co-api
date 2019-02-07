@@ -207,7 +207,7 @@ module.exports = class GSheets {
         ];
 
         const sheets = google.sheets({ version: 'v4', auth: this.auth() });
-        console.log('Appending row to app mining submissions:', rows);
+        console.log('Appending row to app submissions:', rows);
         const sheetOptions = {
           spreadsheetId: process.env.APP_CO_SPREADSHEET_ID,
           range: 'Submissions!A1:N1',
