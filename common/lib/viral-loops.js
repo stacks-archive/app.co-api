@@ -13,7 +13,7 @@ const register = async (app, referralCode, refSource) => {
     params: {
       event: 'registration',
       user: {
-        firstName: app.submitterName,
+        firstname: app.submitterName,
         email: app.contactEmail,
         extraData: {
           name,
