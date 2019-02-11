@@ -32,6 +32,8 @@ const createableKeys = [
   'submitterName',
   'isSubmittingOwnApp',
   'referralSource',
+  'refSource',
+  'referralCode',
 ];
 
 router.post('/submit', async (req, res) => {
