@@ -197,7 +197,7 @@ module.exports = (sequelize, DataTypes) => {
             if (app.id === previousApp.id) {
               app.previousScore = previousApp.memoryRanking;
               console.log('Found previous rank for', app.name, previousApp.previousScore, lastReport.humanReadableDate);
-              app.memoryRanking = (5 * app.averageRanking + 4 * previousApp.averageRanking) / 9;
+              app.memoryRanking = (5 * app.averageRanking + 4 * previousApp.previousScore) / 9;
             }
           });
         }
