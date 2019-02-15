@@ -196,7 +196,12 @@ module.exports = (sequelize, DataTypes) => {
           lastReport.compositeRankings.forEach((previousApp) => {
             if (app.id === previousApp.id) {
               app.previousScore = previousApp.memoryRanking;
-              console.log('Found previous rank for', app.name, previousApp.averageRanking);
+              console.log(
+                'Found previous rank for',
+                app.name,
+                previousApp.averageRanking,
+                lastReport.humanReadableDate,
+              );
               app.memoryRanking = (5 * app.averageRanking + 4 * previousApp.averageRanking) / 9;
             }
           });
