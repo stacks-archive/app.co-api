@@ -199,13 +199,12 @@ module.exports = (sequelize, DataTypes) => {
               console.log(
                 'Found previous rank for',
                 app.name,
-                previousApp.previousScore || previousApp.averageRanking,
+                app.previousScore || previousApp.averageRanking,
                 lastReport.humanReadableDate,
                 'in',
                 monthlyReport.humanReadableDate,
               );
-              app.memoryRanking =
-                (5 * app.averageRanking + 4 * (previousApp.previousScore || previousApp.averageRanking)) / 9;
+              app.memoryRanking = (5 * app.averageRanking + 4 * (app.previousScore || previousApp.averageRanking)) / 9;
             }
           });
         }
