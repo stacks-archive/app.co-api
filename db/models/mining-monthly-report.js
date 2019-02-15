@@ -201,6 +201,8 @@ module.exports = (sequelize, DataTypes) => {
                 app.name,
                 previousApp.previousScore || previousApp.averageRanking,
                 lastReport.humanReadableDate,
+                'in',
+                monthlyReport.humanReadableDate,
               );
               app.memoryRanking =
                 (5 * app.averageRanking + 4 * (previousApp.previousScore || previousApp.averageRanking)) / 9;
