@@ -206,4 +206,10 @@ router.get('/mining-reports/:monthId/download-rankings', async (req, res) => {
   return res.status(200).send(csv);
 });
 
+router.get('/download-apps', async (req, res) => {
+  const apps = await App.findAll();
+  const csv = papa.unparse(apps.map((app) => app.get()));
+  return res.status(200).send(csv);
+});
+
 module.exports = router;
