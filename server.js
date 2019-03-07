@@ -6,6 +6,7 @@ const { Op } = require('sequelize');
 const request = require('request-promise');
 const sortBy = require('lodash/sortBy');
 const Promise = require('bluebird');
+const morgan = require('morgan');
 
 require('dotenv').config();
 
@@ -24,6 +25,7 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '5mb' }));
+app.use(morgan('combined'));
 
 app.use(cors());
 

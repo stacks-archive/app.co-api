@@ -37,6 +37,7 @@
     "mdi-react": "^3.3.0",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
+    "morgan": "^1.9.1",
     "next": "^6.0.0",
     "nodemailer": "^4.6.5",
     "nodemailer-sendgrid-transport": "^0.2.0",
