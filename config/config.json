@@ -22,6 +22,7 @@
     "database": "app_co_production",
     "dialect": "postgres",
     "migrations-path": "./db/migrations",
+    "logging": false,
     "pool": {
       "max": 5,
       "min": 1,
