@@ -43,6 +43,8 @@ module.exports = (sequelize, DataTypes) => {
       referralSource: DataTypes.STRING,
       isSubmittingOwnApp: DataTypes.BOOLEAN,
       productionId: DataTypes.INTEGER,
+      referralCode: DataTypes.STRING,
+      refSource: DataTypes.STRING,
       imageUrl: {
         type: DataTypes.STRING,
       },
@@ -140,10 +142,22 @@ module.exports = (sequelize, DataTypes) => {
       ],
     };
 
+    App.privateColumns = [
+      'status',
+      'notes',
+      'isKYCVerified',
+      'BTCAddress',
+      'contactEmail',
+      'refSource',
+      'referralCode',
+      'referralSource',
+      'submitterName',
+    ];
+
     App.findAllWithRankings = (isAdmin = false) => {
       const options = _.cloneDeep(App.includeOptions);
       if (!isAdmin) {
-        options.attributes = { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress', 'contactEmail'] };
+        options.attributes = { exclude: App.privateColumns };
         options.where = { status: 'accepted' };
       }
       return App.findAll(options);
