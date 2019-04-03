@@ -17,6 +17,7 @@ const categoryEnums = {
   Wallets: 13,
   'Sample Blockstack Apps': 14,
   'Pyramid Schemes': 15,
+  Art: 16,
 };
 
 const categoryIDToEnum = _.invert(categoryEnums);
