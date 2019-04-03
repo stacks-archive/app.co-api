@@ -6,7 +6,7 @@ const Promise = require('bluebird');
 const { App, Ranking, MiningMonthlyReport, MiningReviewerReport, MiningReviewerRanking } = require('../db/models');
 const { clearCache } = require('../common/lib/utils');
 
-const apiURL = 'https://app-co-api.herokuapp.com';
+const apiURL = 'https://api.app.co';
 
 const productionAPI = `${apiURL}/api/apps`;
 
