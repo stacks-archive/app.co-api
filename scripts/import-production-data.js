@@ -2,6 +2,7 @@ const request = require('request-promise');
 const sequelize = require('sequelize');
 const _ = require('lodash');
 const Promise = require('bluebird');
+require('dotenv').config();
 
 const { App, Ranking, MiningMonthlyReport, MiningReviewerReport, MiningReviewerRanking } = require('../db/models');
 const { clearCache } = require('../common/lib/utils');

@@ -196,15 +196,12 @@ module.exports = (sequelize, DataTypes) => {
           lastReport.compositeRankings.forEach((previousApp) => {
             if (app.id === previousApp.id) {
               app.previousScore = previousApp.memoryRanking;
-              // console.log(
-              //   'Found previous rank for',
-              //   app.name,
-              //   app.previousScore || previousApp.averageRanking,
-              //   lastReport.humanReadableDate,
-              //   'in',
-              //   monthlyReport.humanReadableDate,
-              // );
-              app.memoryRanking = (5 * app.averageRanking + 4 * (app.previousScore || previousApp.averageRanking)) / 9;
+              if (monthlyReport.year >= 2019 && monthlyReport.month >= 4) {
+                app.memoryRanking = 0.25 * (app.previousScore || previousApp.averageRaning) + 0.75 * app.averageRanking;
+              } else {
+                app.memoryRanking =
+                  (5 * app.averageRanking + 4 * (app.previousScore || previousApp.averageRanking)) / 9;
+              }
             }
           });
         }
