@@ -41,7 +41,7 @@ router.post('/submit', async (req, res) => {
   appData.status = 'pending_audit';
   console.log('Request to submit app:', appData);
   try {
-    if (appData.authentication === 'Blockstack') {
+    if (appData.authentication === 'Blockstack' && appData.category !== 'Sample Blockstack Apps') {
       const gsheetsData = {
         ...appData,
         firstName: appData.submitterName,
