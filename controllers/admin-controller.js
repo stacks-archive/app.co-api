@@ -55,6 +55,15 @@ router.post('/apps/:appId', async (req, res) => {
   res.json({ success: true, app });
 });
 
+router.get('/apps/:id', async (req, res) => {
+  try {
+    const app = await App.findOne({ ...App.includeOptions, where: { id: req.params.appId } });
+    res.json(app);
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
 router.get('/apps/pending', async (req, res) => {
   const apps = await App.findAll({
     where: {

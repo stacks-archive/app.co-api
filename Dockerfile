@@ -4,6 +4,7 @@ FROM node:10.14.2-alpine as base
 WORKDIR /usr/src
 COPY package.json yarn.lock /usr/src/
 RUN apk add \
+  --repository https://dl-3.alpinelinux.org/alpine/edge/community/ \
   --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
   --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
   --update-cache \
