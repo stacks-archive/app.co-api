@@ -51,7 +51,7 @@
     "react-dom": "^16.3.2",
     "react-toastify": "^4.0.1",
     "request-promise": "^4.2.2",
-    "sequelize": "^4.37.6",
+    "sequelize": "^5.8.7",
     "sequelize-cli": "^4.0.0",
     "styled-components": "^3.2.6",
     "twitter": "^1.7.1",
@@ -120,6 +120,6 @@
     ]
   },
   "engines": {
-    "node": ">=10.9"
+    "node": ">=10.14.2"
   }
 }

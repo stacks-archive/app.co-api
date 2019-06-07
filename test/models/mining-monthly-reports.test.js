@@ -13,7 +13,7 @@ it('works with valid details', async () => {
   });
   await report.save();
   expect(report.id).not.toBeNull();
-  // report = await MiningMonthlyReport.findById(report.id);
+  // report = await MiningMonthlyReport.findByPk(report.id);
   // expect(report.status).toEqual('pending');
 });
 

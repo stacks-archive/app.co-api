@@ -144,7 +144,6 @@ router.post('/monthly-reports/:id/upload', async (req, res) => {
   const reportId = req.params.id;
   console.log(req.body);
   const { reviewerName, summary, apps } = req.body;
-  // const month = await MiningMonthlyReport.findById(reportId);
   const reviewerAttrs = {
     reportId,
     reviewerName,
@@ -206,7 +205,7 @@ const updateableReportKeys = [
 router.post('/monthly-reports/:id', async (req, res) => {
   const data = _.pick(req.body, updateableReportKeys);
   // console.log(data);
-  const report = await MiningMonthlyReport.findById(req.params.id, { include: MiningMonthlyReport.includeOptions });
+  const report = await MiningMonthlyReport.findByPk(req.params.id, { include: MiningMonthlyReport.includeOptions });
   await report.update(data);
   if (data.BTCTransactionId) {
     await report.savePaymentInfo(data.BTCTransactionId);
@@ -215,7 +214,7 @@ router.post('/monthly-reports/:id', async (req, res) => {
 });
 
 router.delete('/monthly-reports/:monthId/reviewers/:id', async (req, res) => {
-  const reviewer = await MiningReviewerReport.findById(req.params.id);
+  const reviewer = await MiningReviewerReport.findByPk(req.params.id);
   await reviewer.destroy();
   await clearCache();
   // console.log(reviewer);
@@ -240,7 +239,7 @@ router.get('/mining-ready-apps', async (req, res) => {
 });
 
 router.get('/mining-reports/:monthId/download-rankings', async (req, res) => {
-  const month = await MiningMonthlyReport.findById(req.params.monthId, { include: MiningMonthlyReport.includeOptions });
+  const month = await MiningMonthlyReport.findByPk(req.params.monthId, { include: MiningMonthlyReport.includeOptions });
   month.compositeRankings = await month.getCompositeRankings();
   const rankings = month.compositeRankings.map((app) => {
     const appData = {

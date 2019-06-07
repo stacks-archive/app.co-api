@@ -125,11 +125,6 @@ module.exports = (sequelize, DataTypes) => {
     MiningMonthlyReport._models = models;
   };
 
-  // MiningMonthlyReport.getCompositeRankings = async (id) => {
-  //   const report = await MiningMonthlyReport.findById(id, { include: MiningMonthlyReport.includeOptions });
-
-  // };
-
   MiningMonthlyReport.prototype.getCompositeRankings = function getCompositeRankings() {
     const monthlyReport = this;
     return new Promise(async (resolve) => {
