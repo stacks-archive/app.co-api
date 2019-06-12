@@ -41,6 +41,10 @@ const updatableKeys = [
   'isKYCVerified',
   'BTCAddress',
   'contactEmail',
+  'stacksAddress',
+  'hasCollectedKYC',
+  'hasAcceptedSECTerms',
+  'hasAcceptedTerms',
 ];
 
 router.post('/apps/:appId', async (req, res) => {
