@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
       productionId: DataTypes.INTEGER,
       referralCode: DataTypes.STRING,
       refSource: DataTypes.STRING,
+      stacksAddress: DataTypes.STRING,
+      hasCollectedKYC: DataTypes.BOOLEAN,
+      hasAcceptedSECTerms: DataTypes.BOOLEAN,
+      hasAcceptedTerms: DataTypes.BOOLEAN,
       imageUrl: {
         type: DataTypes.STRING,
       },
@@ -152,6 +156,10 @@ module.exports = (sequelize, DataTypes) => {
       'referralCode',
       'referralSource',
       'submitterName',
+      'stacksAddress',
+      'hasCollectedKYC',
+      'hasAcceptedSECTerms',
+      'hasAcceptedTerms',
     ];
 
     App.findAllWithRankings = (isAdmin = false) => {
