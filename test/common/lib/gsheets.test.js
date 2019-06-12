@@ -2,7 +2,7 @@ import '../../tests_helper';
 import GSheets from '../../../common/lib/gsheets';
 import { App } from '../../../db/models';
 
-test.only('it should be able to setup authentication', async () => {
+test('it should be able to setup authentication', async () => {
   const auth = GSheets.auth();
   expect(auth.credentials.access_token).toEqual(process.env.GOOGLE_ACCESS_TOKEN);
   expect(auth._clientSecret).toEqual(process.env.GOOGLE_OAUTH_SECRET);
@@ -10,7 +10,7 @@ test.only('it should be able to setup authentication', async () => {
   expect(auth.credentials.refresh_token).toEqual(process.env.GOOGLE_REFRESH_TOKEN);
 });
 
-test.only(
+test.skip(
   'it should fetch apps on the spreadsheet',
   async () => {
     const apps = await GSheets.import();
@@ -29,7 +29,7 @@ test.only(
   50000,
 );
 
-test(
+test.skip(
   'it creates App records correctly',
   async () => {
     await GSheets.import();
@@ -40,7 +40,7 @@ test(
 );
 
 describe('getImageURL', () => {
-  test('it can fetch the right image from google apps', async () => {
+  test.skip('it can fetch the right image from google apps', async () => {
     const googleUrl = 'https://photos.app.goo.gl/0LSINllTFGbqhggp2';
 
     const url = await GSheets.getImageURL(googleUrl);

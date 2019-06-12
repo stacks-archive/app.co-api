@@ -12,6 +12,11 @@
       "presets": [
         "@babel/preset-env"
       ]
+    },
+    "test-circleci": {
+      "presets": [
+        "@babel/preset-env"
+      ]
     }
   }
 }

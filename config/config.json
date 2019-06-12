@@ -17,6 +17,15 @@
     "logging": false,
     "migrations-path": "./db/migrations"
   },
+  "test-circleci": {
+    "username": "circleci",
+    "password": null,
+    "database": "app_co_test",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "logging": false,
+    "migrations-path": "./db/migrations"
+  },
   "production": {
     "use_env_variable": "DATABASE_URL",
     "database": "app_co_production",

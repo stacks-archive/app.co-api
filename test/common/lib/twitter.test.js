@@ -2,14 +2,14 @@ import helpers from '../../tests_helper';
 import { paginateMentions, saveRanking } from '../../../common/lib/twitter';
 import { Ranking } from '../../../db/models';
 
-test('fetches the total number of mentions for an app', async () => {
+test.skip('fetches the total number of mentions for an app', async () => {
   const app = await helpers.makeApp();
 
   const totalMentions = await paginateMentions(app);
   expect(totalMentions).toBeGreaterThan(100);
 });
 
-test('saves a ranking model for an app', async () => {
+test.skip('saves a ranking model for an app', async () => {
   const app = await helpers.makeApp();
 
   const ranking = await saveRanking(app);
@@ -18,7 +18,7 @@ test('saves a ranking model for an app', async () => {
   expect(ranking.twitterMentions).toBeGreaterThan(0);
 });
 
-test('it should override the current ranking', async () => {
+test.skip('it should override the current ranking', async () => {
   const app = await helpers.makeApp();
 
   const ranking = await Ranking.create({
