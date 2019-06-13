@@ -91,3 +91,8 @@ describe('findWithRankings', () => {
     expect(apps[0].Rankings.length).toEqual(1);
   });
 });
+
+it('should save an access token', async () => {
+  const app = await App.create({ name: 'asdf' });
+  expect(app.accessToken).not.toBeFalsy();
+});

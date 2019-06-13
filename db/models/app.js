@@ -49,6 +49,7 @@ module.exports = (sequelize, DataTypes) => {
       hasCollectedKYC: DataTypes.BOOLEAN,
       hasAcceptedSECTerms: DataTypes.BOOLEAN,
       hasAcceptedTerms: DataTypes.BOOLEAN,
+      accessToken: DataTypes.STRING,
       imageUrl: {
         type: DataTypes.STRING,
       },
@@ -116,6 +117,9 @@ module.exports = (sequelize, DataTypes) => {
           if (imageUrl !== previous) {
             await app.uploadToGCS({ save: false });
           }
+          if (!app.accessToken) {
+            app.accessToken = uuid();
+          }
           return true;
         },
       },
@@ -160,6 +164,7 @@ module.exports = (sequelize, DataTypes) => {
       'hasCollectedKYC',
       'hasAcceptedSECTerms',
       'hasAcceptedTerms',
+      'accessToken',
     ];
 
     App.findAllWithRankings = (isAdmin = false) => {
