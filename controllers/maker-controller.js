@@ -1,5 +1,6 @@
 const express = require('express');
 const { App } = require('../db/models');
+const _ = require('lodash');
 
 const Router = express.Router();
 
@@ -26,5 +27,20 @@ Router.use(async (req, res, next) => {
 });
 
 Router.get('/app', (req, res) => res.json({ app: req.app }));
+
+const updateableKeys = ['BTCAddress', 'stacksAddress'];
+
+Router.post('/app', async (req, res) => {
+  try {
+    const { app } = req;
+    const data = _.pick(req.body, updateableKeys);
+    await app.update(data);
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false });
+  }
+});
 
 module.exports = Router;
