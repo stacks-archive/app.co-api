@@ -17,6 +17,7 @@ const { setup } = require('./common/lib/gcloud');
 const appConstants = require('./db/models/constants/app-constants');
 const AdminController = require('./controllers/admin-controller');
 const UserController = require('./controllers/user-controller');
+const MakerController = require('./controllers/maker-controller');
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = parseInt(process.env.PORT, 10) || 4000;
@@ -25,7 +26,13 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '5mb' }));
-app.use(morgan('combined'));
+app.use(
+  morgan(
+    ':remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time ms',
+  ),
+);
+app.enable('trust proxy');
+app.set('trust proxy', () => true);
 
 app.use(cors());
 
@@ -34,6 +41,7 @@ if (!dev) {
 }
 
 app.use('/api/admin', AdminController);
+app.use('/api/maker', MakerController);
 app.use('/api', UserController);
 
 app.post('/api/fetch_rankings', async (req, res) => {
