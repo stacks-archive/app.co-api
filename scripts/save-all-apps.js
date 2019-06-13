@@ -9,7 +9,6 @@ const run = async () => {
       console.log(`${app.name} has no access token`);
     }
   });
-  console.log(savedApps[0]);
 };
 
 run()
