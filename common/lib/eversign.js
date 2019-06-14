@@ -2,19 +2,21 @@ const request = require('request-promise');
 
 const api = 'https://api.eversign.com/api/document';
 
-const makeDocument = async (app) => {
-  const sandbox = !process.env.EVERSIGN_PROD;
+const makeDocument = async (app, name, email) => {
+  // const sandbox = !process.env.EVERSIGN_PROD;
   const body = {
-    sandbox: sandbox ? 1 : 0,
+    // sandbox: sandbox ? 1 : 0,
     template_id: process.env.EVERSIGN_TEMPLATE_ID,
     title: 'App Mining Participation Agreement',
     client: app.name,
     embedded_signing_enabled: 1,
+    custom_requester_name: 'Blockstack PBC',
+    custom_requester_email: 'hello@app.co',
     signers: [
       {
         role: 'App Mining Participant',
-        name: app.submitterName || app.name,
-        email: app.contactEmail || 'hello@app.co',
+        name: name || app.submitterName || app.name,
+        email: email || app.contactEmail || 'hello@app.co',
       },
     ],
   };
