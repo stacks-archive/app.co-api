@@ -1,6 +1,7 @@
 const express = require('express');
-const { App } = require('../db/models');
 const _ = require('lodash');
+const { App } = require('../db/models');
+const { makeDocument, getDocument } = require('../common/lib/eversign');
 
 const Router = express.Router();
 
@@ -40,6 +41,22 @@ Router.post('/app', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false });
+  }
+});
+
+Router.post('/make-participation-agreement', async (req, res) => {
+  try {
+    const { app } = req;
+    if (app.eversignDocumentID) {
+      const document = await getDocument(app);
+      return res.json({ success: true, embedURL: document.signers[0].embedded_signing_url });
+    }
+    const document = await makeDocument(app);
+    await app.update({ eversignDocumentID: document.document_hash });
+    return res.json({ success: true, embedURL: document.signers[0].embedded_signing_url });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false });
   }
 });
 

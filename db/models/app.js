@@ -50,6 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       hasAcceptedSECTerms: DataTypes.BOOLEAN,
       hasAcceptedTerms: DataTypes.BOOLEAN,
       accessToken: DataTypes.STRING,
+      eversignDocumentID: DataTypes.STRING,
       imageUrl: {
         type: DataTypes.STRING,
       },
@@ -165,6 +166,7 @@ module.exports = (sequelize, DataTypes) => {
       'hasAcceptedSECTerms',
       'hasAcceptedTerms',
       'accessToken',
+      'eversignDocumentID',
     ];
 
     App.findAllWithRankings = (isAdmin = false) => {
