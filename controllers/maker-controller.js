@@ -2,6 +2,7 @@ const express = require('express');
 const _ = require('lodash');
 const { App } = require('../db/models');
 const { makeDocument, getDocument } = require('../common/lib/eversign');
+const { createVerification } = require('../common/lib/jumio');
 
 const Router = express.Router();
 
@@ -55,6 +56,23 @@ Router.post('/make-participation-agreement', async (req, res) => {
     const document = await makeDocument(app, name, email);
     await app.update({ eversignDocumentID: document.document_hash });
     return res.json({ success: true, embedURL: document.signers[0].embedded_signing_url });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false });
+  }
+});
+
+Router.post('/initiate-kyc', async (req, res) => {
+  try {
+    const { app } = req;
+    if (app.hasCollectedKYC) {
+      return res.json({ success: false, error: 'KYC is already completed.' });
+    }
+    if (app.jumioEmbedURL) {
+      return res.json({ success: true, embedURL: app.jumioEmbedURL });
+    }
+    const embedURL = await createVerification(app);
+    return res.json({ success: true, embedURL });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false });
