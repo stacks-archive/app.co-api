@@ -51,6 +51,7 @@ module.exports = (sequelize, DataTypes) => {
       hasAcceptedTerms: DataTypes.BOOLEAN,
       accessToken: DataTypes.STRING,
       eversignDocumentID: DataTypes.STRING,
+      jumioTransactionID: DataTypes.STRING,
       imageUrl: {
         type: DataTypes.STRING,
       },
@@ -167,6 +168,7 @@ module.exports = (sequelize, DataTypes) => {
       'hasAcceptedTerms',
       'accessToken',
       'eversignDocumentID',
+      'jumioTransactionID',
     ];
 
     App.findAllWithRankings = (isAdmin = false) => {
