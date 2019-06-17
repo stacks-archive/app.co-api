@@ -1,6 +1,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     queryInterface.addColumn('Apps', 'jumioTransactionID', Sequelize.STRING);
+    queryInterface.addColumn('Apps', 'jumioEmbedURL', Sequelize.STRING);
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -11,6 +12,8 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
+    queryInterface.removeColumn('Apps', 'jumioTransactionID', Sequelize.STRING);
+    queryInterface.removeColumn('Apps', 'jumioEmbedURL', Sequelize.STRING);
     /*
       Add reverting commands here.
       Return a promise to correctly handle asynchronicity.
