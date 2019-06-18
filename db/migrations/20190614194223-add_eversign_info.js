@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    // queryInterface.addColumn('Apps', 'eversignDocumentID', Sequelize.STRING);
+    queryInterface.addColumn('Apps', 'eversignDocumentID', Sequelize.STRING);
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -11,6 +11,7 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
+    queryInterface.removeColumn('Apps', 'eversignDocumentID', Sequelize.STRING);
     /*
       Add reverting commands here.
       Return a promise to correctly handle asynchronicity.
