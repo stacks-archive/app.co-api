@@ -57,6 +57,9 @@ const fetchAppMiningData = async () => {
 
     const existing = await MiningMonthlyReport.findOne({ where: { year, month } });
     if (existing) {
+      const rankings = await MiningReviewerRanking.findAll({ where: { reportId: existing.id } });
+      const deletes = rankings.map((r) => r.destroy());
+      await Promise.all(deletes);
       await existing.destroy();
     }
     const newReport = new MiningMonthlyReport({
