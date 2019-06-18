@@ -35,4 +35,25 @@ Router.post('/eversign-webhook', async (req, res) => {
   }
 });
 
+Router.post('/jumio/success', async (req, res) => {
+  const { jumioIdScanReference, verificationStatus } = req.body;
+  const { token } = req.query;
+  console.log(req.body);
+  console.log(`Jumio Callback. Status: ${verificationStatus}. Transaction: ${jumioIdScanReference}`);
+  if (token !== process.env.JUMIO_CALLBACK_TOKEN) {
+    console.error('Invalid callback token. Rejecting.');
+    return res.status(500).json({ success: false });
+  }
+  if (verificationStatus === 'APPROVED_VERIFIED') {
+    const app = await App.findOne({ where: { jumioTransactionID: jumioIdScanReference } });
+    if (app) {
+      await app.update({ hasCollectedKYC: true });
+      return res.json({ success: true });
+    }
+    console.log('No app found with given Jumio transaction');
+    return res.status(404).json({ success: false });
+  }
+  return res.json({ success: true });
+});
+
 module.exports = Router;
