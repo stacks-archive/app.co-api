@@ -1,7 +1,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    queryInterface.addColumn('Apps', 'jumioTransactionID', Sequelize.STRING);
-    queryInterface.addColumn('Apps', 'jumioEmbedURL', Sequelize.STRING);
+    // queryInterface.addColumn('Apps', 'jumioTransactionID', Sequelize.STRING);
+    // queryInterface.addColumn('Apps', 'jumioEmbedURL', Sequelize.STRING);
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
