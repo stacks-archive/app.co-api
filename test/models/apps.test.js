@@ -1,5 +1,5 @@
 import helpers from '../tests_helper';
-import { App, Ranking } from '../../db/models';
+import { App, Ranking, Slug } from '../../db/models';
 
 it('can fetch from an empty state', async () => {
   const apps = await App.findAll();
@@ -95,4 +95,13 @@ describe('findWithRankings', () => {
 it('should save an access token', async () => {
   const app = await App.create({ name: 'asdf' });
   expect(app.accessToken).not.toBeFalsy();
+});
+
+it('can make a slug if there is a duplicate', async () => {
+  const name = 'tester';
+  await helpers.makeApp(name);
+  const app2 = await helpers.makeApp(name);
+  const slug = await Slug.findOne({ where: { appId: app2.id } });
+  expect(slug.value.startsWith(name)).toBeTruthy();
+  expect(slug.value.length).toBeGreaterThan(name.length);
 });

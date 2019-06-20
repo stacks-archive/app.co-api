@@ -106,13 +106,14 @@ module.exports = (sequelize, DataTypes) => {
     {
       hooks: {
         afterCreate: async (app) => {
-          const { Slug } = require('./index');
-          const value = slugify(app.name.toLowerCase());
-          await Slug.create({
-            value,
-            default: true,
-            appId: app.id,
-          });
+          // const { Slug } = require('./index');
+          // const value = slugify(app.name.toLowerCase());
+          // await Slug.create({
+          //   value,
+          //   default: true,
+          //   appId: app.id,
+          // });
+          await app.setDefaultSlug();
         },
         beforeSave: async (app) => {
           const { imageUrl } = app;
