@@ -59,6 +59,24 @@ router.post('/apps/:appId', async (req, res) => {
   res.json({ success: true, app });
 });
 
+router.post('/apps/:appId/reset-id-verification', async (req, res) => {
+  try {
+    const app = await App.findOne({ where: { id: req.params.appId } });
+    console.log('Resetting ID verification for', app.name);
+    if (app.hasCollectedKYC) {
+      return res.status(400).json({ success: false });
+    }
+    await app.update({
+      jumioTransactionID: null,
+      jumioEmbedURL: null,
+    });
+    return res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false });
+  }
+});
+
 router.get('/apps/pending', async (req, res) => {
   try {
     const apps = await App.findAll({
