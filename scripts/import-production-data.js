@@ -73,7 +73,7 @@ const fetchAppMiningData = async () => {
     });
     await newReport.save();
 
-    return Promise.map(report.MiningReviewerReports, async (reviewerReport) => {
+    Promise.map(report.MiningReviewerReports, async (reviewerReport) => {
       const newReviewerReport = new MiningReviewerReport({
         reportId: newReport.id,
         reviewerName: reviewerReport.reviewerName,
@@ -94,6 +94,10 @@ const fetchAppMiningData = async () => {
         return newRanking;
       });
     });
+    await newReport.update({
+      status: 'published',
+    });
+    return newReport;
   });
 };
 
