@@ -192,6 +192,7 @@ router.get('/mining-ready-apps', async (req, res) => {
         },
       },
       isKYCVerified: true,
+      status: 'accepted',
     },
   });
   // console.log(apps[0].dataValues);
