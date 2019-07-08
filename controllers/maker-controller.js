@@ -52,8 +52,8 @@ Router.post('/make-participation-agreement', async (req, res) => {
       const document = await getDocument(app);
       return res.json({ success: true, embedURL: document.signers[0].embedded_signing_url });
     }
-    const { name, email } = req.query;
-    const document = await makeDocument(app, name, email);
+    const { name, email, isUSA } = req.query;
+    const document = await makeDocument(app, name, email, isUSA === 'true');
     await app.update({ eversignDocumentID: document.document_hash });
     return res.json({ success: true, embedURL: document.signers[0].embedded_signing_url });
   } catch (error) {

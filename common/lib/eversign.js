@@ -2,11 +2,12 @@ const request = require('request-promise');
 
 const api = 'https://api.eversign.com/api/document';
 
-const makeDocument = async (app, name, email) => {
+const makeDocument = async (app, name, email, isUSA) => {
   // const sandbox = !process.env.EVERSIGN_PROD;
+  const id = isUSA ? process.env.EVERSIGN_TEMPLATE_ID : process.env.EVERSIGN_INTL_TEMPLATE_ID;
   const body = {
     // sandbox: sandbox ? 1 : 0,
-    template_id: process.env.EVERSIGN_TEMPLATE_ID,
+    template_id: id,
     title: 'App Mining Participation Agreement',
     client: app.name,
     embedded_signing_enabled: 1,
@@ -22,7 +23,6 @@ const makeDocument = async (app, name, email) => {
   };
   console.log(process.env.EVERSIGN_TOKEN);
   const url = `${api}?access_key=${process.env.EVERSIGN_TOKEN}&business_id=${process.env.EVERSIGN_BUSINESS_ID}`;
-  console.log(url);
   const document = await request.post({
     uri: url,
     json: true,
