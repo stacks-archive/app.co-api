@@ -41,7 +41,19 @@ const newAppEmail = (app) => {
   };
 };
 
+const appMagicLinkEmail = (app, renderer) => {
+  const url = `https://app.co/maker/${app.accessToken}`;
+  const html = renderer({ app, url });
+  return {
+    from: 'mining@app.co',
+    to: app.contactEmail,
+    subject: 'Important App Mining Notification: Action Required for Your STX Payout',
+    html,
+  };
+};
+
 module.exports = {
   sendMail,
   newAppEmail,
+  appMagicLinkEmail,
 };
