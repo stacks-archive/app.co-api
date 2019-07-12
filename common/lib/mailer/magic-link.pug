@@ -1,0 +1,408 @@
+doctype html
+html
+  head
+    meta(name='viewport', content='width=device-width')
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    title Simple Transactional Email
+    style.
+      /* -------------------------------------
+      GLOBAL RESETS
+      ------------------------------------- */
+      /*All the styling goes here*/
+      img {
+      border: none;
+      -ms-interpolation-mode: bicubic;
+      max-width: 100%;
+      }
+      body {
+      background-color: #f6f6f6;
+      font-family: sans-serif;
+      -webkit-font-smoothing: antialiased;
+      font-size: 14px;
+      line-height: 1.4;
+      margin: 0;
+      padding: 0;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      }
+      table {
+      border-collapse: separate;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      width: 100%; }
+      table td {
+      font-family: sans-serif;
+      font-size: 14px;
+      vertical-align: top;
+      }
+      /* -------------------------------------
+      BODY & CONTAINER
+      ------------------------------------- */
+      .body {
+      background-color: #f6f6f6;
+      width: 100%;
+      }
+      /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
+      .container {
+      display: block;
+      margin: 0 auto !important;
+      /* makes it centered */
+      max-width: 580px;
+      padding: 10px;
+      width: 580px;
+      }
+      /* This should also be a block element, so that it will fill 100% of the .container */
+      .content {
+      box-sizing: border-box;
+      display: block;
+      margin: 0 auto;
+      max-width: 580px;
+      padding: 10px;
+      }
+      /* -------------------------------------
+      HEADER, FOOTER, MAIN
+      ------------------------------------- */
+      .main {
+      background: #ffffff;
+      border-radius: 3px;
+      width: 100%;
+      }
+      .wrapper {
+      box-sizing: border-box;
+      padding: 20px;
+      }
+      .content-block {
+      padding-bottom: 10px;
+      padding-top: 10px;
+      }
+      .footer {
+      clear: both;
+      margin-top: 10px;
+      text-align: center;
+      width: 100%;
+      }
+      .footer td,
+      .footer p,
+      .footer span,
+      .footer a {
+      color: #999999;
+      font-size: 12px;
+      text-align: center;
+      }
+      /* -------------------------------------
+      TYPOGRAPHY
+      ------------------------------------- */
+      h1,
+      h2,
+      h3,
+      h4 {
+      color: #000000;
+      font-family: sans-serif;
+      font-weight: 400;
+      line-height: 1.4;
+      margin: 0;
+      margin-bottom: 30px;
+      }
+      h1 {
+      font-size: 35px;
+      font-weight: 300;
+      text-align: center;
+      text-transform: capitalize;
+      }
+      p,
+      ul,
+      ol {
+      font-family: sans-serif;
+      font-size: 14px;
+      font-weight: normal;
+      margin: 0;
+      margin-bottom: 15px;
+      }
+      p li,
+      ul li,
+      ol li {
+      list-style-position: inside;
+      margin-left: 5px;
+      }
+      a {
+      color: #3498db;
+      text-decoration: underline;
+      }
+      /* -------------------------------------
+      BUTTONS
+      ------------------------------------- */
+      .btn {
+      box-sizing: border-box;
+      width: 100%; }
+      .btn > tbody > tr > td {
+      padding-bottom: 15px; }
+      .btn table {
+      width: auto;
+      }
+      .btn table td {
+      background-color: #ffffff;
+      border-radius: 5px;
+      text-align: center;
+      }
+      .btn a {
+      background-color: #ffffff;
+      border: solid 1px #3498db;
+      border-radius: 5px;
+      box-sizing: border-box;
+      color: #3498db;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 0;
+      padding: 12px 25px;
+      text-decoration: none;
+      text-transform: capitalize;
+      }
+      .btn-primary table td {
+      background-color: #3498db;
+      }
+      .btn-primary a {
+      background-color: #3498db;
+      border-color: #3498db;
+      color: #ffffff;
+      }
+      /* -------------------------------------
+      OTHER STYLES THAT MIGHT BE USEFUL
+      ------------------------------------- */
+      .last {
+      margin-bottom: 0;
+      }
+      .first {
+      margin-top: 0;
+      }
+      .align-center {
+      text-align: center;
+      }
+      .align-right {
+      text-align: right;
+      }
+      .align-left {
+      text-align: left;
+      }
+      .clear {
+      clear: both;
+      }
+      .mt0 {
+      margin-top: 0;
+      }
+      .mb0 {
+      margin-bottom: 0;
+      }
+      .preheader {
+      color: transparent;
+      display: none;
+      height: 0;
+      max-height: 0;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      mso-hide: all;
+      visibility: hidden;
+      width: 0;
+      }
+      .powered-by a {
+      text-decoration: none;
+      }
+      hr {
+      border: 0;
+      border-bottom: 1px solid #f6f6f6;
+      margin: 20px 0;
+      }
+      /* -------------------------------------
+      RESPONSIVE AND MOBILE FRIENDLY STYLES
+      ------------------------------------- */
+      @media only screen and (max-width: 620px) {
+      table[class=body] h1 {
+      font-size: 28px !important;
+      margin-bottom: 10px !important;
+      }
+      table[class=body] p,
+      table[class=body] ul,
+      table[class=body] ol,
+      table[class=body] td,
+      table[class=body] span,
+      table[class=body] a {
+      font-size: 16px !important;
+      }
+      table[class=body] .wrapper,
+      table[class=body] .article {
+      padding: 10px !important;
+      }
+      table[class=body] .content {
+      padding: 0 !important;
+      }
+      table[class=body] .container {
+      padding: 0 !important;
+      width: 100% !important;
+      }
+      table[class=body] .main {
+      border-left-width: 0 !important;
+      border-radius: 0 !important;
+      border-right-width: 0 !important;
+      }
+      table[class=body] .btn table {
+      width: 100% !important;
+      }
+      table[class=body] .btn a {
+      width: 100% !important;
+      }
+      table[class=body] .img-responsive {
+      height: auto !important;
+      max-width: 100% !important;
+      width: auto !important;
+      }
+      }
+      /* -------------------------------------
+      PRESERVE THESE STYLES IN THE HEAD
+      ------------------------------------- */
+      @media all {
+      .ExternalClass {
+      width: 100%;
+      }
+      .ExternalClass,
+      .ExternalClass p,
+      .ExternalClass span,
+      .ExternalClass font,
+      .ExternalClass td,
+      .ExternalClass div {
+      line-height: 100%;
+      }
+      .apple-link a {
+      color: inherit !important;
+      font-family: inherit !important;
+      font-size: inherit !important;
+      font-weight: inherit !important;
+      line-height: inherit !important;
+      text-decoration: none !important;
+      }
+      #MessageViewBody a {
+      color: inherit;
+      text-decoration: none;
+      font-size: inherit;
+      font-family: inherit;
+      font-weight: inherit;
+      line-height: inherit;
+      }
+      .btn-primary table td:hover {
+      background-color: #34495e !important;
+      }
+      .btn-primary a:hover {
+      background-color: #34495e !important;
+      border-color: #34495e !important;
+      }
+      }
+  body
+    span.preheader This is preheader text. Some clients will show this text as a preview.
+    table.body(role='presentation', border='0', cellpadding='0', cellspacing='0')
+      tbody
+        tr
+          td  
+          td.container
+            .content
+              // START CENTERED WHITE CONTAINER
+              table.main(role='presentation')
+                // START MAIN CONTENT AREA
+                tbody
+                  tr
+                    td.wrapper
+                      table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                        tbody
+                          tr
+                            td
+                              p Dear #{app.name},
+                              p
+                                | Given our recent 
+                                a(href='https://blog.blockstack.org/blockstack-token-sale-sec-qualified/') qualification by the SEC
+                                | , we want to start issuing more payouts and in the Blockstack native token, Stacks (STX).
+                                | We will be sharing more information on updated payout schedules next week. For now, please complete the following steps by July 31st, 2019 to start earning Stacks starting in August 2019. *See important disclaimer below.
+                              //- table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                              //-   tbody
+                              //-     tr
+                              //-       td(align='left')
+                              //-         table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                              //-           tbody
+                              //-             tr
+                              //-               td
+                              //-                 a(href='http://htmlemail.io', target='_blank') Call To Action
+                              p
+                                | In order to help this transition, there are some changes to the App Mining registration process. We have also made it easier to edit your app.
+                              
+                              p
+                                | Given this change, you can now:
+
+                              ul
+                                li Login to app.co maker flow (currently using a magic link).
+                                li E-sign a participation agreement document.
+                                li Complete an identity verification process. 
+                                li Update payment information (STX and BTC). 
+
+                              p 
+                                em *Please note we may require additional information if you are registering as an entity. 
+
+                              p
+                                strong Here is your magic link [do not share]:
+
+                              p
+                                a(href=`${url}`) #{url}
+                              
+                              p 
+                                | More info on how to generate a STX wallet here: 
+                                a(href='https://wallet.blockstack.org') wallet.blockstack.org
+                              
+                              p
+                                | Lastly, we are still looking for your feedback on how we can improve Blockstack and App Mining!
+                                | Please take 5 minutes of your time to complete the 
+                                a(href='https://community.blockstack.org/satisfaction-q2-2019') app developer survey
+                                | .
+
+                              p Best,
+                              p The App Mining Team
+
+                              p
+                                strong
+                                  em Important Disclaimer:
+
+                              p
+                                em
+                                  | The Securities and Exchange Commission (SEC) has qualified the offering statement that we have filed with the SEC. The information in that offering statement is more complete than the information we are providing now, and could differ in important ways. You must read the documents filed with the SEC before investing. The offering is being made only by means of its offering statement. This document shall not constitute an offer to sell or the solicitation of an offer to buy, nor shall there be any sale of these securities in any state or jurisdiction in which such offer, solicitation or sale would be unlawful prior to registration or qualification under the securities laws of any such state or jurisdiction.
+                              
+                              p
+                                em
+                                  | An indication of interest involves no obligation or commitment of any kind. Any person interested in investing in any offering of Stacks Tokens should review our disclosures and the publicly filed offering statement and the final offering circular that is part of that offering statement 
+                                  a(href='https://stackstoken.com/circular') here
+                                  | . Blockstack is not registered, licensed or supervised as a broker dealer or investment adviser by the Securities and Exchange Commission (SEC), the Financial Industry Regulatory Authority (FINRA) or any other financial regulatory authority or licensed to provide any financial advice or services.
+
+                              p
+                                strong
+                                  em Forward-looking statements
+
+                              p
+                                em
+                                  | This communication contains forward-looking statements that are based on our beliefs and assumptions and on information currently available to us. In some cases, you can identify forward-looking statements by the following words: “will,” “expect,” “would,” “intend,” “believe,” or other comparable terminology. Forward-looking statements in this document include, but are not limited to, statements about our Reg A+ offering and launch of our network and collaborations and partnerships. These statements involve risks, uncertainties, assumptions and other factors that may cause actual results or performance to be materially different. More information on the factors, risks and uncertainties that could cause or contribute to such differences is included in our filings with the Securities and Exchange Commission, including in the “Risk Factors” and “Management’s Discussion & Analysis” sections of our offering statement on Form 1-A. We cannot assure you that the forward-looking statements will prove to be accurate. These forward-looking statements speak only as of the date hereof. We disclaim any obligation to update these forward-looking statements.
+                                
+                  // END MAIN CONTENT AREA
+                  // END CENTERED WHITE CONTAINER
+                  // START FOOTER
+                  //- .footer
+                  //-   table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                  //-     tbody
+                  //-       tr
+                  //-         td.content-block
+                  //-           span.apple-link Company Inc, 3 Abbey Road, San Francisco CA 94102
+                  //-           br
+                  //-           |  Don't like these emails? 
+                  //-           a(href='http://i.imgur.com/CScmqnj.gif') Unsubscribe
+                  //-           | .
+                  //-       tr
+                  //-         td.content-block.powered-by
+                  //-           | Powered by 
+                  //-           a(href='http://htmlemail.io') HTMLemail
+                  //-           | .
+                  // END FOOTER
+          td  

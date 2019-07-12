@@ -45,6 +45,14 @@ module.exports = (sequelize, DataTypes) => {
       productionId: DataTypes.INTEGER,
       referralCode: DataTypes.STRING,
       refSource: DataTypes.STRING,
+      stacksAddress: DataTypes.STRING,
+      hasCollectedKYC: DataTypes.BOOLEAN,
+      hasAcceptedSECTerms: DataTypes.BOOLEAN,
+      hasAcceptedTerms: DataTypes.BOOLEAN,
+      accessToken: DataTypes.STRING,
+      eversignDocumentID: DataTypes.STRING,
+      jumioTransactionID: DataTypes.STRING,
+      jumioEmbedURL: DataTypes.STRING,
       imageUrl: {
         type: DataTypes.STRING,
       },
@@ -98,19 +106,23 @@ module.exports = (sequelize, DataTypes) => {
     {
       hooks: {
         afterCreate: async (app) => {
-          const { Slug } = require('./index');
-          const value = slugify(app.name.toLowerCase());
-          await Slug.create({
-            value,
-            default: true,
-            appId: app.id,
-          });
+          // const { Slug } = require('./index');
+          // const value = slugify(app.name.toLowerCase());
+          // await Slug.create({
+          //   value,
+          //   default: true,
+          //   appId: app.id,
+          // });
+          await app.setDefaultSlug();
         },
         beforeSave: async (app) => {
           const { imageUrl } = app;
           const previous = app.previous('imageUrl');
           if (imageUrl !== previous) {
             await app.uploadToGCS({ save: false });
+          }
+          if (!app.accessToken) {
+            app.accessToken = uuid();
           }
           return true;
         },
@@ -152,6 +164,14 @@ module.exports = (sequelize, DataTypes) => {
       'referralCode',
       'referralSource',
       'submitterName',
+      'stacksAddress',
+      'hasCollectedKYC',
+      'hasAcceptedSECTerms',
+      'hasAcceptedTerms',
+      'accessToken',
+      'eversignDocumentID',
+      'jumioTransactionID',
+      'jumioEmbedURL',
     ];
 
     App.findAllWithRankings = (isAdmin = false) => {

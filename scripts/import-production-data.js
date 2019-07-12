@@ -4,7 +4,14 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 require('dotenv').config();
 
-const { App, Ranking, MiningMonthlyReport, MiningReviewerReport, MiningReviewerRanking } = require('../db/models');
+const {
+  App,
+  Ranking,
+  MiningMonthlyReport,
+  MiningReviewerReport,
+  MiningReviewerRanking,
+  MiningAppPayout,
+} = require('../db/models');
 const { clearCache } = require('../common/lib/utils');
 
 const apiURL = 'https://api.app.co';
@@ -57,6 +64,12 @@ const fetchAppMiningData = async () => {
 
     const existing = await MiningMonthlyReport.findOne({ where: { year, month } });
     if (existing) {
+      const rankings = await MiningReviewerRanking.findAll({ where: { reportId: existing.id } });
+      const deletes = rankings.map((r) => r.destroy());
+      await Promise.all(deletes);
+      const payouts = await MiningAppPayout.findAll({ where: { reportId: existing.id } });
+      const payoutDeletes = payouts.map((p) => p.destroy());
+      await Promise.all(payoutDeletes);
       await existing.destroy();
     }
     const newReport = new MiningMonthlyReport({
@@ -70,7 +83,7 @@ const fetchAppMiningData = async () => {
     });
     await newReport.save();
 
-    return Promise.map(report.MiningReviewerReports, async (reviewerReport) => {
+    await Promise.map(report.MiningReviewerReports, async (reviewerReport) => {
       const newReviewerReport = new MiningReviewerReport({
         reportId: newReport.id,
         reviewerName: reviewerReport.reviewerName,
@@ -91,6 +104,23 @@ const fetchAppMiningData = async () => {
         return newRanking;
       });
     });
+
+    await Promise.map(report.MiningAppPayouts, async (payout) => {
+      const app = await App.findOne({ where: { productionId: payout.appId } });
+      if (!app) {
+        return true;
+      }
+      const newPayout = new MiningAppPayout({
+        BTCPaymentValue: payout.BTCPaymentValue,
+        appId: app.id,
+        reportId: newReport.id,
+      });
+      return newPayout.save();
+    });
+    await newReport.update({
+      status: 'published',
+    });
+    return newReport;
   });
 };
 
