@@ -77,6 +77,24 @@ router.post('/apps/:appId/reset-id-verification', async (req, res) => {
   }
 });
 
+router.post('/apps/:appId/reset-participation-agreement', async (req, res) => {
+  try {
+    const app = await App.findOne({ where: { id: req.params.appId } });
+    console.log('Resetting participation agreement for', app.name);
+    if (app.hasCollectedKYC) {
+      return res.status(400).json({ success: false });
+    }
+    await app.update({
+      eversignDocumentID: null,
+      hasAcceptedSECTerms: null,
+    });
+    return res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false });
+  }
+});
+
 router.get('/apps/pending', async (req, res) => {
   try {
     const apps = await App.findAll({
