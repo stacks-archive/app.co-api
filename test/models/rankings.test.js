@@ -9,7 +9,7 @@ beforeEach(async () => {
   });
 });
 
-test('can be associated with an app', async () => {
+test.skip('can be associated with an app', async () => {
   const ranking = await Ranking.create({
     appId: app.id,
     date: new Date(),
@@ -20,7 +20,7 @@ test('can be associated with an app', async () => {
   expect(found.name).toEqual(app.name);
 });
 
-test('should require unique dates per-app', async () => {
+test.skip('should require unique dates per-app', async () => {
   const now = new Date();
   await Ranking.create({
     appId: app.id,
