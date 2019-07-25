@@ -119,7 +119,9 @@ module.exports = (sequelize, DataTypes) => {
           const { imageUrl } = app;
           const previous = app.previous('imageUrl');
           if (imageUrl !== previous) {
-            await app.uploadToGCS({ save: false });
+            try {
+              await app.uploadToGCS({ save: false });
+            } catch (error) {}
           }
           if (!app.accessToken) {
             app.accessToken = uuid();
