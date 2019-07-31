@@ -85,7 +85,7 @@ app.get('/api/app-mining-apps', async (req, res) => {
       isKYCVerified: true,
       status: 'accepted',
     },
-    attributes: { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress', 'contactEmail', 'submitterName'] },
+    attributes: { exclude: App.privateColumns },
   });
   let months = await MiningMonthlyReport.findAll({
     where: {
@@ -138,7 +138,7 @@ app.get('/api/app-mining-apps', async (req, res) => {
       },
       status: 'accepted',
     },
-    attributes: { exclude: ['status', 'notes', 'isKYCVerified', 'BTCAddress'] },
+    attributes: { exclude: App.privateColumns },
   });
   const allApps = apps.concat(
     notReady.map((_app) => {
