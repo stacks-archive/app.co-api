@@ -52,8 +52,21 @@ const appMagicLinkEmail = (app, renderer) => {
   };
 };
 
+const newMagicLinkEmail = (app, renderer) => {
+  const url = `https://app.co/maker/${app.accessToken}`;
+  const html = renderer({ app, url });
+  return {
+    from: 'mining@app.co',
+    to: app.contactEmail,
+    subject: `${app.name} - An update to your maker portal link`,
+    cc: 'mining@app.co',
+    html,
+  };
+};
+
 module.exports = {
   sendMail,
   newAppEmail,
   appMagicLinkEmail,
+  newMagicLinkEmail,
 };
