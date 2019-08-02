@@ -88,6 +88,9 @@ module.exports = (sequelize, DataTypes) => {
             include: [
               {
                 model: models.App,
+                attributes: {
+                  exclude: models.App.privateColumns,
+                },
                 include: [
                   {
                     model: models.Slug,
