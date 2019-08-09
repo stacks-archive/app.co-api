@@ -171,6 +171,10 @@ module.exports = class GSheets {
           submission.repo,
           submission.appIsPublic,
           moment().format('YYYY-MM-DD h:mm a'),
+          '',
+          '',
+          submission.referralCode,
+          submission.refSource,
         ];
 
         const sheets = google.sheets({ version: 'v4', auth: this.auth() });
