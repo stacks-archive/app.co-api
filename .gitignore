@@ -13,3 +13,4 @@ yarn-error.log
 tmp
 gcs.json
 _gcs.json
+scripts/analyze-payouts.js
