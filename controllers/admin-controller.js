@@ -224,22 +224,11 @@ router.delete('/monthly-reports/:monthId/reviewers/:id', async (req, res) => {
 
 router.get('/mining-ready-apps', async (req, res) => {
   const apps = await App.findAll({
-    where: {
-      BTCAddress: {
-        [Op.or]: {
-          [Op.ne]: null,
-          [Op.ne]: '',
-        },
-      },
-      isKYCVerified: true,
-      status: 'accepted',
-    },
+    where: App.MiningReadyQuery,
   });
   // console.log(apps[0].dataValues);
   const appRows = apps.map((app) => ({
     'App Id': app.id,
-    Ranking: '',
-    CompositeScore: '',
     'App Name': app.name,
     Website: app.website,
     Description: app.description,

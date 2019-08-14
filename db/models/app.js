@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const uuid = require('uuid/v4');
+const { Op } = require('sequelize');
 
 const ENUMS = require('./constants/app-constants');
 const { slugify } = require('../../common/lib/utils');
@@ -154,6 +155,28 @@ module.exports = (sequelize, DataTypes) => {
           order: [['default', 'DESC']],
         },
       ],
+    };
+
+    App.MiningReadyQuery = {
+      BTCAddress: {
+        [Op.or]: {
+          [Op.ne]: null,
+          [Op.ne]: '',
+        },
+      },
+      stacksAddress: {
+        [Op.or]: {
+          [Op.ne]: null,
+          [Op.ne]: '',
+        },
+      },
+      isKYCVerified: true,
+      hasAcceptedSECTerms: true,
+      hasCollectedKYC: true,
+      status: 'accepted',
+      categoryID: {
+        [Op.ne]: ENUMS.categoryEnums['Sample Blockstack Apps'],
+      },
     };
 
     App.privateColumns = [

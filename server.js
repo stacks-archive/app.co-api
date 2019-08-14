@@ -72,19 +72,7 @@ app.get('/api/apps', async (req, res) => {
 app.get('/api/app-mining-apps', async (req, res) => {
   const apps = await App.findAll({
     ...App.includeOptions,
-    where: {
-      categoryID: {
-        [Op.ne]: ENUMS.categoryEnums['Sample Blockstack Apps'],
-      },
-      BTCAddress: {
-        [Op.or]: {
-          [Op.ne]: null,
-          [Op.ne]: '',
-        },
-      },
-      isKYCVerified: true,
-      status: 'accepted',
-    },
+    where: App.MiningReadyQuery,
     attributes: { exclude: App.privateColumns },
   });
   let months = await MiningMonthlyReport.findAll({
@@ -129,11 +117,20 @@ app.get('/api/app-mining-apps', async (req, res) => {
             [Op.eq]: '',
           },
         },
-        isKYCVerified: {
+        stacksAddress: {
           [Op.or]: {
-            [Op.eq]: false,
             [Op.eq]: null,
+            [Op.eq]: '',
           },
+        },
+        isKYCVerified: {
+          [Op.ne]: true,
+        },
+        hasCollectedKYC: {
+          [Op.ne]: true,
+        },
+        hasAcceptedSECTerms: {
+          [Op.ne]: true,
         },
       },
       status: 'accepted',
