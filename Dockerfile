@@ -3,16 +3,16 @@ FROM node:10.14.2-alpine as base
 # FROM blockstack/node:latest as base
 WORKDIR /usr/src
 COPY package.json yarn.lock /usr/src/
-RUN apk add \
-  --repository https://dl-3.alpinelinux.org/alpine/edge/community/ \
-  --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
-  --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
-  --update-cache \
-  python \
-  py-pip \
-  make \
-  g++ \
-  vips-dev
+RUN apk add --update --no-cache build-base \
+  && apk add \
+    --update-cache \
+    --repository https://alpine.global.ssl.fastly.net/alpine/edge/community/ \
+    --repository https://alpine.global.ssl.fastly.net/alpine/edge/main \
+    python   \
+    py-pip   \
+    make   \
+    g++   \
+    vips-dev
 RUN yarn install && apk del \
   python \
   py-pip \
