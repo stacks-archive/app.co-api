@@ -110,29 +110,33 @@ app.get('/api/app-mining-apps', async (req, res) => {
         [Op.ne]: ENUMS.categoryEnums['Sample Blockstack Apps'],
       },
       authenticationID: ENUMS.authenticationEnums.Blockstack,
-      [Op.or]: {
-        BTCAddress: {
-          [Op.or]: {
-            [Op.eq]: null,
-            [Op.eq]: '',
+      [Op.or]: [
+        {
+          BTCAddress: {
+            [Op.or]: [{ [Op.eq]: null }, { [Op.eq]: '' }],
           },
         },
-        stacksAddress: {
-          [Op.or]: {
-            [Op.eq]: null,
-            [Op.eq]: '',
+        {
+          stacksAddress: {
+            [Op.or]: [{ [Op.eq]: null }, { [Op.eq]: '' }],
           },
         },
-        isKYCVerified: {
-          [Op.ne]: true,
+        {
+          isKYCVerified: {
+            [Op.ne]: true,
+          },
         },
-        hasCollectedKYC: {
-          [Op.ne]: true,
+        {
+          hasCollectedKYC: {
+            [Op.ne]: true,
+          },
         },
-        hasAcceptedSECTerms: {
-          [Op.ne]: true,
+        {
+          hasAcceptedSECTerms: {
+            [Op.ne]: true,
+          },
         },
-      },
+      ],
       status: 'accepted',
     },
     attributes: { exclude: App.privateColumns },
