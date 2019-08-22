@@ -78,6 +78,9 @@ module.exports = (sequelize, DataTypes) => {
     {},
   );
   MiningMonthlyReport.associate = function associate(models) {
+    const { privateColumns } = models.App;
+    const btcIndex = privateColumns.indexOf('BTCAddress');
+    privateColumns.splice(btcIndex, 1);
     MiningMonthlyReport.includeOptions = [
       {
         model: models.MiningReviewerReport,
@@ -89,7 +92,7 @@ module.exports = (sequelize, DataTypes) => {
               {
                 model: models.App,
                 attributes: {
-                  exclude: models.App.privateColumns,
+                  exclude: privateColumns,
                 },
                 include: [
                   {
