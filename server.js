@@ -123,17 +123,17 @@ app.get('/api/app-mining-apps', async (req, res) => {
         },
         {
           isKYCVerified: {
-            [Op.ne]: true,
+            [Op.not]: true,
           },
         },
         {
           hasCollectedKYC: {
-            [Op.ne]: true,
+            [Op.not]: true,
           },
         },
         {
           hasAcceptedSECTerms: {
-            [Op.ne]: true,
+            [Op.not]: true,
           },
         },
       ],
