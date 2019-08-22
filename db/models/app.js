@@ -160,13 +160,13 @@ module.exports = (sequelize, DataTypes) => {
     App.MiningReadyQuery = {
       BTCAddress: {
         [Op.or]: {
-          [Op.ne]: null,
+          [Op.not]: null,
           [Op.ne]: '',
         },
       },
       stacksAddress: {
         [Op.or]: {
-          [Op.ne]: null,
+          [Op.not]: null,
           [Op.ne]: '',
         },
       },
