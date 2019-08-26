@@ -62,6 +62,9 @@ module.exports = (sequelize, DataTypes) => {
           this.MiningAppPayouts.forEach((payout) => {
             sum += payout.BTC * this.purchaseConversionRate;
           });
+          if (this.stxPayoutTotal) {
+            sum += this.stxPayoutTotal;
+          }
           return sum;
         },
       },
@@ -172,7 +175,13 @@ module.exports = (sequelize, DataTypes) => {
           apps[app.id].rankings.push(standardScore);
         });
       });
-      const { purchaseConversionRate, MiningAppPayouts } = monthlyReport;
+      const {
+        purchaseConversionRate,
+        MiningAppPayouts,
+        stxPayoutTotal,
+        stxPayoutDecay,
+        stxPayoutConversionRate,
+      } = monthlyReport;
       const weighted = (score) => {
         const theta = 0.5;
         if (score >= 0) {
@@ -180,7 +189,7 @@ module.exports = (sequelize, DataTypes) => {
         }
         return -((-score) ** theta);
       };
-      const sorted = _.sortBy(Object.values(apps), (app) => {
+      let sorted = _.sortBy(Object.values(apps), (app) => {
         const { rankings } = app;
         let sum = 0;
         rankings.forEach((ranking) => {
@@ -218,6 +227,19 @@ module.exports = (sequelize, DataTypes) => {
         apps[app.id] = app;
         return -app.memoryRanking;
       });
+      if (stxPayoutTotal) {
+        let remainingSTX = stxPayoutTotal;
+        sorted = sorted.map((app) => {
+          const stxPayout = remainingSTX * stxPayoutDecay;
+          remainingSTX -= stxPayout;
+          const stxRewards = stxPayout / stxPayoutConversionRate;
+          app.usdRewards += stxPayout;
+          app.formattedUsdRewards = accounting.formatMoney(app.usdRewards);
+          app.stxRewards = stxRewards;
+          app.formattedSTXRewards = accounting.formatNumber(stxRewards);
+          return app;
+        });
+      }
       return resolve(
         sorted.map((app) => ({
           ...app,
