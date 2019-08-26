@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       purchaseConversionRate: DataTypes.FLOAT,
       BTCTransactionId: DataTypes.STRING,
       name: DataTypes.STRING,
+      stxPayoutIsIOU: DataTypes.BOOLEAN,
+      stxPayoutTotal: DataTypes.INTEGER,
+      stxPayoutDecay: DataTypes.FLOAT,
+      stxPayoutConversionRate: DataTypes.FLOAT,
       blockExplorerUrl: {
         type: DataTypes.VIRTUAL,
         get() {
