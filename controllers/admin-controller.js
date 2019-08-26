@@ -198,6 +198,10 @@ const updateableReportKeys = [
   'purchasedAt',
   'purchaseConversionRate',
   'BTCTransactionId',
+  'stxPayoutTotal',
+  'stxPayoutDecay',
+  'stxPayoutConversionRate',
+  'stxPayoutIsIOU',
   'status',
   'name',
 ];
@@ -208,8 +212,13 @@ router.post('/monthly-reports/:id', async (req, res) => {
   const report = await MiningMonthlyReport.findByPk(req.params.id, { include: MiningMonthlyReport.includeOptions });
   await report.update(data);
   if (data.BTCTransactionId) {
-    await report.savePaymentInfo(data.BTCTransactionId);
+    try {
+      await report.savePaymentInfo(data.BTCTransactionId);
+    } catch (error) {
+      console.error('Error when finding BTC Transaction', data.BTCTransactionId);
+    }
   }
+  await clearCache();
   res.json({ success: true });
 });
 
