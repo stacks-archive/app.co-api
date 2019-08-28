@@ -240,7 +240,10 @@ router.get('/mining-ready-apps', async (req, res) => {
 });
 
 router.get('/mining-reports/:monthId/download-rankings', async (req, res) => {
-  const includeOptions = [{ ...MiningMonthlyReport.includeOptions[0] }, { ...MiningMonthlyReport.includeOptions[1] }];
+  const includeOptions = [
+    { ..._.cloneDeep(MiningMonthlyReport.includeOptions[0]) },
+    { ...MiningMonthlyReport.includeOptions[1] },
+  ];
   includeOptions[0].include[0].include[0].attributes.exclude = [];
   const month = await MiningMonthlyReport.findById(req.params.monthId, { include: includeOptions });
   month.compositeRankings = await month.getCompositeRankings();
