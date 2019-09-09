@@ -53,15 +53,20 @@ router.post('/submit', async (req, res) => {
       };
       if (prod) {
         await GSheets.appendAppMiningSubmission(gsheetsData);
-        await subscribe(
-          appData.contactEmail,
-          { SOURCE: 'app.co submission' },
-          {
-            id: 'e36d5dc9',
-            update_existing: true,
-            double_optin: false,
-          },
-        );
+        try {
+          await subscribe(
+            appData.contactEmail,
+            { SOURCE: 'app.co submission' },
+            {
+              id: 'e36d5dc9',
+              update_existing: true,
+              double_optin: false,
+            },
+          );
+        } catch (error) {
+          console.error('Error while subscribing new app submission to mailing list');
+          console.error(error);
+        }
       }
     } else if (prod) {
       await GSheets.appendAppCoSubmission({
