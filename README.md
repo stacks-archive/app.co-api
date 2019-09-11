@@ -19,12 +19,6 @@ yarn db:migrate
 To seed your database with a bunch of app data, first create the file `.env` in the root of this project,
 add the contents of the `App.co API ENV (development)` from 1Password. (Internal Blockstack PBC Engineers only)
 
-Then, run:
-
-```bash
-node scripts/import-spreadsheet.js
-```
-
 ### Environment setup
 
 There are some ENV variables you should set before running the app. To get started, run `cp .env.sample .env` to create a `.env` file. Then, change the values in that file as appropriate.
