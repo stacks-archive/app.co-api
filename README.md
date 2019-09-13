@@ -17,7 +17,7 @@ yarn db:migrate
 ```
 
 To seed your database with a bunch of app data, first create the file `.env` in the root of this project,
-add the contents of the `App.co .env file` from 1Password.
+add the contents of the `App.co API ENV (development)` from 1Password. (Internal Blockstack PBC Engineers only)
 
 ### Environment setup
 
@@ -26,14 +26,6 @@ There are some ENV variables you should set before running the app. To get start
 ### Running the app
 
 Run `node server.js` to start the API server.
-
-### Update Twitter Rankings
-
-First, make sure you've setup Twitter API secrets in your `.env` file. Then, run:
-
-~~~bash
-node scripts/fetch-rankings.js
-~~~
 
 ### Running tests
 

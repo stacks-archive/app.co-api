@@ -14,7 +14,7 @@ const createVerification = async (app) => {
     // errorUrl: 'https://example.com',
     // locale: 'en',
     // reportingCriteria: 'asdf',
-    // tokenLifetimeInMinutes: 5,
+    tokenLifetimeInMinutes: 86300,
     // workflowId: 200,
   };
 
