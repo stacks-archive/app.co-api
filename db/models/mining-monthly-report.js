@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
           }
           let sum = 0;
           this.MiningAppPayouts.forEach((payout) => {
-            sum += payout.BTC * this.purchaseConversionRate;
+            sum += parseFloat((payout.BTC * this.purchaseConversionRate).toFixed(2));
           });
           if (this.stxPayoutTotal) {
             sum += this.stxPayoutTotal;
