@@ -1,6 +1,7 @@
 const express = require('express');
 const { verifyAuthResponse } = require('blockstack/lib/auth/authVerification');
 const { decodeToken } = require('jsontokens');
+const jwt = require('express-jwt');
 const _ = require('lodash');
 const { subscribe } = require('mailigen');
 
@@ -9,10 +10,10 @@ const { createToken } = require('../common/lib/auth/token');
 const { sendMail, newAppEmail } = require('../common/lib/mailer');
 const GSheets = require('../common/lib/gsheets');
 const registerViralLoops = require('../common/lib/viral-loops');
-const { authenticationEnums } = require('../db/models/constants/app-constants');
-// const { subscribe } = require('../common/lib/mailigen');
 
 const router = express.Router();
+
+router.use(jwt({ secret: process.env.JWT_SECRET }));
 
 const prod = process.env.NODE_ENV === 'production';
 
@@ -40,6 +41,14 @@ router.post('/submit', async (req, res) => {
   const appData = _.pick(req.body, createableKeys);
   appData.status = 'pending_audit';
   console.log('Request to submit app:', appData);
+
+  console.log(req.user);
+  if (req.user && req.user.data.username) {
+    const { username } = req.user.data;
+    console.log('Adding Blockstack ID to app', username);
+    appData.adminBlockstackID = username;
+  }
+
   try {
     if (appData.authentication === 'Blockstack' && appData.category !== 'Sample Blockstack Apps') {
       const gsheetsData = {
@@ -78,7 +87,16 @@ router.post('/submit', async (req, res) => {
     const app = await App.create({
       ...appData,
     });
-    sendMail(newAppEmail(app));
+    try {
+      await sendMail(newAppEmail(app));
+    } catch (error) {
+      if (!prod) {
+        console.warn('Unable to send email to admins for new app. Is maildev running?');
+      } else {
+        console.error('Error sending new app email to admins.');
+        console.error(error);
+      }
+    }
     const { refSource, referralCode } = req.body;
     if (referralCode) {
       try {
@@ -161,9 +179,9 @@ router.post('/authenticate', async (req, res) => {
   userAttrs.blockstackDID = payload.iss;
   await user.update(userAttrs);
   console.log(user.id);
-  const jwt = createToken(user);
+  const token = createToken(user);
 
-  return res.json({ success: true, token: jwt, user });
+  return res.json({ success: true, token, user });
 });
 
 router.post('/app-mining-submission', async (req, res) => {
