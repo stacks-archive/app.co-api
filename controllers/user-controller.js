@@ -42,7 +42,6 @@ router.post('/submit', async (req, res) => {
   appData.status = 'pending_audit';
   console.log('Request to submit app:', appData);
 
-  console.log(req.user);
   if (req.user && req.user.data.username) {
     const { username } = req.user.data;
     console.log('Adding Blockstack ID to app', username);
