@@ -13,7 +13,7 @@ const registerViralLoops = require('../common/lib/viral-loops');
 
 const router = express.Router();
 
-router.use(jwt({ secret: process.env.JWT_SECRET }));
+router.use(jwt({ secret: process.env.JWT_SECRET, credentialsRequired: false }));
 
 const prod = process.env.NODE_ENV === 'production';
 
