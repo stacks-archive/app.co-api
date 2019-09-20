@@ -12,7 +12,7 @@ Router.use(jwt({ secret: process.env.JWT_SECRET }));
 Router.use(async (req, res, next) => {
   try {
     const { user } = req;
-    if (!user) {
+    if (!user || !user.data.username) {
       return res.status(400).json({ success: false });
     }
     const { username } = user.data;
