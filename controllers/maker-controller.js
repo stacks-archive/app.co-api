@@ -1,22 +1,36 @@
 const express = require('express');
 const _ = require('lodash');
+const jwt = require('express-jwt');
 const { App } = require('../db/models');
 const { makeDocument, getDocument } = require('../common/lib/eversign');
 const { createVerification } = require('../common/lib/jumio');
 
 const Router = express.Router();
 
+Router.use(jwt({ secret: process.env.JWT_SECRET }));
+
 Router.use(async (req, res, next) => {
   try {
-    const { accessToken } = req.query;
-    const app = await App.findOne({
-      where: { accessToken },
+    const { user } = req;
+    if (!user) {
+      return res.status(400).json({ success: false });
+    }
+    const { username } = user.data;
+    const apps = await App.findAll({
+      where: { adminBlockstackID: username },
       attributes: {
         exclude: ['status', 'notes'],
       },
     });
-    if (app) {
+    if (req.params.appId) {
+      const app = apps.filter((_app) => String(_app.id) === req.params.appId);
+      if (!app) {
+        return res.status(404).json({ success: false });
+      }
       req.app = app;
+    }
+    if (apps.length) {
+      req.apps = apps;
       return next();
     }
     return res.status(400).json({ success: false });
@@ -28,11 +42,11 @@ Router.use(async (req, res, next) => {
   }
 });
 
-Router.get('/app', (req, res) => res.json({ app: req.app }));
+Router.get('/apps', (req, res) => res.json({ app: req.apps[0], apps: req.apps }));
 
 const updateableKeys = ['BTCAddress', 'stacksAddress'];
 
-Router.post('/app', async (req, res) => {
+Router.post('/apps/:appId', async (req, res) => {
   try {
     const { app } = req;
     const data = _.pick(req.body, updateableKeys);
@@ -45,7 +59,7 @@ Router.post('/app', async (req, res) => {
   }
 });
 
-Router.post('/make-participation-agreement', async (req, res) => {
+Router.post('/apps/:appId/make-participation-agreement', async (req, res) => {
   try {
     const { app } = req;
     if (app.eversignDocumentID) {
@@ -62,7 +76,7 @@ Router.post('/make-participation-agreement', async (req, res) => {
   }
 });
 
-Router.post('/initiate-kyc', async (req, res) => {
+Router.post('/apps/:appId/initiate-kyc', async (req, res) => {
   try {
     const { app } = req;
     if (app.hasCollectedKYC) {
