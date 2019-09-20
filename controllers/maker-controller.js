@@ -23,7 +23,7 @@ Router.use(async (req, res, next) => {
       },
     });
     if (req.params.appId) {
-      const app = apps.filter((_app) => String(_app.id) === req.params.appId);
+      const app = apps.find((_app) => String(_app.id) === req.params.appId);
       if (!app) {
         return res.status(404).json({ success: false });
       }

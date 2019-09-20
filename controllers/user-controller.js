@@ -189,4 +189,48 @@ router.post('/app-mining-submission', async (req, res) => {
   res.json({ success: true });
 });
 
+router.get('/magic-link/:accessToken', async (req, res) => {
+  try {
+    const { accessToken } = req.params;
+    const app = await App.findOne({
+      where: { accessToken },
+      attributes: {
+        exclude: ['status', 'notes'],
+      },
+    });
+    if (!app) {
+      return res.status(404).json({ success: false });
+    }
+    return res.json({ app });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false });
+  }
+});
+
+router.post('/magic-link/:accessToken', async (req, res) => {
+  try {
+    const { accessToken } = req.params;
+    const app = await App.findOne({
+      where: { accessToken },
+    });
+    if (!app) {
+      return res.status(404).json({ success: false });
+    }
+    if (!req.user) {
+      return res.status(400).json({ success: false, message: 'You must be logged in to claim an app.' });
+    }
+    if (app.adminBlockstackID) {
+      return res.status(400).json({ success: false, message: 'This app has already been claimed.' });
+    }
+    await app.update({
+      adminBlockstackID: req.user.data.username,
+    });
+    return res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false });
+  }
+});
+
 module.exports = router;
