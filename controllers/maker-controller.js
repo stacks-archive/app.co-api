@@ -22,6 +22,15 @@ Router.use(async (req, res, next) => {
         exclude: ['status', 'notes'],
       },
     });
+
+    if (req.query.appId) {
+      const app = apps.find((_app) => String(_app.id) === req.query.appId);
+      if (!app) {
+        return res.status(404).json({ success: false });
+      }
+      req.app = app;
+    }
+
     if (req.params.appId) {
       const app = apps.find((_app) => String(_app.id) === req.params.appId);
       if (!app) {
@@ -34,10 +43,8 @@ Router.use(async (req, res, next) => {
       return next();
     }
     return res.status(400).json({ success: false });
-    // return next();
   } catch (error) {
     console.error(error);
-    // return next(error);
     return res.status(400).json({ success: false });
   }
 });
