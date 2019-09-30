@@ -7,6 +7,7 @@ const request = require('request-promise');
 const sortBy = require('lodash/sortBy');
 const Promise = require('bluebird');
 const morgan = require('morgan');
+const epimetheus = require('epimetheus');
 
 require('dotenv').config();
 
@@ -24,6 +25,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const port = parseInt(process.env.PORT, 10) || 4000;
 
 const app = express();
+epimetheus.instrument(app);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '5mb' }));
