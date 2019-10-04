@@ -112,6 +112,7 @@ router.post('/subscribe', async (req, res) => {
 });
 
 router.post('/blockstack-subscribe', async (req, res) => {
+  res.header('Access-Control-Allow-Origin', 'https://blockstack.org');
   const { email, from, list, ...rest } = req.body;
   console.log('Subscribing', email);
   try {
