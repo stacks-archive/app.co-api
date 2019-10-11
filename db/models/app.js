@@ -203,7 +203,12 @@ module.exports = (sequelize, DataTypes) => {
       const options = _.cloneDeep(App.includeOptions);
       if (!isAdmin) {
         options.attributes = { exclude: App.privateColumns };
-        options.where = { status: 'accepted' };
+        options.where = {
+          status: 'accepted',
+          name: {
+            [Op.notILike]: '%Animal Kingdom%',
+          },
+        };
       }
       return App.findAll(options);
     };
