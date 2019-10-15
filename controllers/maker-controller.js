@@ -22,22 +22,22 @@ Router.use(async (req, res, next) => {
         exclude: ['status', 'notes'],
       },
     });
-    if (req.params.appId) {
-      const app = apps.find((_app) => String(_app.id) === req.params.appId);
+
+    if (req.query.appId) {
+      const app = apps.find((_app) => String(_app.id) === req.query.appId);
       if (!app) {
         return res.status(404).json({ success: false });
       }
       req.app = app;
     }
+
     if (apps.length) {
       req.apps = apps;
       return next();
     }
     return res.status(400).json({ success: false });
-    // return next();
   } catch (error) {
     console.error(error);
-    // return next(error);
     return res.status(400).json({ success: false });
   }
 });
@@ -46,7 +46,7 @@ Router.get('/apps', (req, res) => res.json({ app: req.apps[0], apps: req.apps })
 
 const updateableKeys = ['BTCAddress', 'stacksAddress'];
 
-Router.post('/apps/:appId', async (req, res) => {
+Router.post('/apps', async (req, res) => {
   try {
     const { app } = req;
     const data = _.pick(req.body, updateableKeys);
@@ -59,7 +59,7 @@ Router.post('/apps/:appId', async (req, res) => {
   }
 });
 
-Router.post('/apps/:appId/make-participation-agreement', async (req, res) => {
+Router.post('/apps/make-participation-agreement', async (req, res) => {
   try {
     const { app } = req;
     if (app.eversignDocumentID) {
@@ -76,7 +76,7 @@ Router.post('/apps/:appId/make-participation-agreement', async (req, res) => {
   }
 });
 
-Router.post('/apps/:appId/initiate-kyc', async (req, res) => {
+Router.post('/apps/initiate-kyc', async (req, res) => {
   try {
     const { app } = req;
     if (app.hasCollectedKYC) {

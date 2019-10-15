@@ -168,7 +168,6 @@ const fetchData = async () => {
   } catch (error) {
     console.log('Error in all Promise.all', error);
   }
-  await clearCache();
   console.log('Done');
   // process.exit();
   return true;
@@ -177,6 +176,11 @@ const fetchData = async () => {
 const run = async () => {
   await fetchData();
   await fetchAppMiningData();
+  try {
+    await clearCache();
+  } catch (error) {
+    console.log('Unable to clear cache. Is server running? ', error);
+  }
 };
 
 run()
