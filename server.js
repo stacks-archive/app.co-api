@@ -7,7 +7,8 @@ const request = require('request-promise');
 const sortBy = require('lodash/sortBy');
 const Promise = require('bluebird');
 const morgan = require('morgan');
-const { createMiddleware: createPrometheusMiddleware, getSummary, getContentType } = require('@promster/express');
+const { createMiddleware: createPrometheusMiddleware } = require('@promster/express');
+const { createServer } = require('@promster/server');
 
 require('dotenv').config();
 
@@ -26,6 +27,9 @@ const port = parseInt(process.env.PORT, 10) || 4000;
 
 const app = express();
 app.use(createPrometheusMiddleware({ app }));
+
+// Create `/metrics` endpoint on separate server
+createServer({ port: 9153 }).then(() => console.log(`@promster/server started on port 9153.`));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '5mb' }));
@@ -179,16 +183,6 @@ app.get('/api/mining-faq', async (req, res) => {
     json: true,
   });
   res.json(faq);
-});
-
-// Expose prometheus metrics
-app.use('/metrics', (req, res) => {
-  if (req.query.prometheus_key !== process.env.PROMETHEUS_KEY) {
-    return res.status(400).end();
-  }
-
-  res.setHeader('Content-Type', getContentType());
-  return res.end(getSummary());
 });
 
 setup().then(() => {
