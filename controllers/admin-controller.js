@@ -54,7 +54,7 @@ router.post('/apps/:appId', async (req, res) => {
   console.log(data);
 
   app = await app.update(data);
-  await clearCache();
+  clearCache();
 
   res.json({ success: true, app });
 });
@@ -218,15 +218,14 @@ router.post('/monthly-reports/:id', async (req, res) => {
       console.error('Error when finding BTC Transaction', data.BTCTransactionId);
     }
   }
-  await clearCache();
+  clearCache();
   res.json({ success: true });
 });
 
 router.delete('/monthly-reports/:monthId/reviewers/:id', async (req, res) => {
   const reviewer = await MiningReviewerReport.findByPk(req.params.id);
   await reviewer.destroy();
-  await clearCache();
-  // console.log(reviewer);
+  clearCache();
   res.json({ success: true });
 });
 
