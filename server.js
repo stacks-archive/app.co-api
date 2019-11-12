@@ -7,6 +7,8 @@ const request = require('request-promise');
 const sortBy = require('lodash/sortBy');
 const Promise = require('bluebird');
 const morgan = require('morgan');
+const { createMiddleware: createPrometheusMiddleware } = require('@promster/express');
+const { createServer } = require('@promster/server');
 
 require('dotenv').config();
 
@@ -24,6 +26,10 @@ const dev = process.env.NODE_ENV !== 'production';
 const port = parseInt(process.env.PORT, 10) || 4000;
 
 const app = express();
+app.use(createPrometheusMiddleware({ app }));
+
+// Create `/metrics` endpoint on separate server
+createServer({ port: 9154 }).then(() => console.log(`@promster/server started on port 9154.`));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '5mb' }));
