@@ -29,7 +29,7 @@ const app = express();
 app.use(createPrometheusMiddleware({ app }));
 
 // Create `/metrics` endpoint on separate server
-createServer({ port: 9153 }).then(() => console.log(`@promster/server started on port 9153.`));
+createServer({ port: 9154 }).then(() => console.log(`@promster/server started on port 9154.`));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '5mb' }));
