@@ -253,7 +253,7 @@ router.get('/mining-reports/:monthId/download-rankings', async (req, res) => {
     { ...MiningMonthlyReport.includeOptions[1] },
   ];
   includeOptions[0].include[0].include[0].attributes.exclude = [];
-  const month = await MiningMonthlyReport.findById(req.params.monthId, { include: includeOptions });
+  const month = await MiningMonthlyReport.findByPk(req.params.monthId, { include: includeOptions });
   month.compositeRankings = await month.getCompositeRankings();
   const rankings = month.compositeRankings.map((app) => {
     const appData = {
