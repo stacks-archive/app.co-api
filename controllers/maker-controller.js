@@ -31,11 +31,8 @@ Router.use(async (req, res, next) => {
       req.app = app;
     }
 
-    if (apps.length) {
-      req.apps = apps;
-      return next();
-    }
-    return res.status(400).json({ success: false });
+    req.apps = apps;
+    return next();
   } catch (error) {
     console.error(error);
     return res.status(400).json({ success: false });
