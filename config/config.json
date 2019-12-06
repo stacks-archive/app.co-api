@@ -26,6 +26,17 @@
     "logging": false,
     "migrations-path": "./db/migrations"
   },
+  "staging": {
+    "use_env_variable": "DATABASE_URL",
+    "migrations-path": "./db/migrations",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true
+      }
+    },
+    "ssl": true
+  },
   "production": {
     "use_env_variable": "DATABASE_URL",
     "database": "app_co_production",
