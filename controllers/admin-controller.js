@@ -204,6 +204,8 @@ const updateableReportKeys = [
   'stxPayoutIsIOU',
   'status',
   'name',
+  'btcPayoutTotal',
+  'btcPayoutDecay',
 ];
 
 router.post('/monthly-reports/:id', async (req, res) => {
