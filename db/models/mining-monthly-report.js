@@ -21,6 +21,8 @@ module.exports = (sequelize, DataTypes) => {
       stxPayoutTotal: DataTypes.INTEGER,
       stxPayoutDecay: DataTypes.FLOAT,
       stxPayoutConversionRate: DataTypes.FLOAT,
+      btcPayoutTotal: DataTypes.INTEGER,
+      btcPayoutDecay: DataTypes.FLOAT,
       blockExplorerUrl: {
         type: DataTypes.VIRTUAL,
         get() {
@@ -55,16 +57,7 @@ module.exports = (sequelize, DataTypes) => {
       totalRewardsUsd: {
         type: DataTypes.VIRTUAL,
         get() {
-          if (!this.MiningAppPayouts) {
-            return null;
-          }
-          let sum = 0;
-          this.MiningAppPayouts.forEach((payout) => {
-            sum += parseFloat((payout.BTC * this.purchaseConversionRate).toFixed(2));
-          });
-          if (this.stxPayoutTotal) {
-            sum += this.stxPayoutTotal;
-          }
+          const sum = this.btcPayoutTotal + this.stxPayoutTotal;
           return sum;
         },
       },
@@ -172,10 +165,11 @@ module.exports = (sequelize, DataTypes) => {
       });
       const {
         purchaseConversionRate,
-        MiningAppPayouts,
         stxPayoutTotal,
         stxPayoutDecay,
         stxPayoutConversionRate,
+        btcPayoutDecay,
+        btcPayoutTotal,
       } = monthlyReport;
       const weighted = (score) => {
         const theta = 0.5;
@@ -192,17 +186,6 @@ module.exports = (sequelize, DataTypes) => {
         });
         const avg = sum / rankings.length;
         const { hostname } = URL.parse(app.website);
-        let payout;
-        MiningAppPayouts.forEach((appPayout) => {
-          if (appPayout.appId === app.id) {
-            payout = appPayout;
-          }
-        });
-        if (payout) {
-          app.usdRewards = purchaseConversionRate * payout.BTC;
-          app.formattedUsdRewards = accounting.formatMoney(app.usdRewards);
-        }
-        app.payout = payout;
         app.domain = hostname;
         app.averageRanking = avg;
         app.memoryRanking = avg;
@@ -221,6 +204,18 @@ module.exports = (sequelize, DataTypes) => {
         }
         apps[app.id] = app;
         return -app.memoryRanking;
+      });
+      let remainingBTC = btcPayoutTotal;
+      sorted = sorted.map((app) => {
+        const btcPayout = remainingBTC * btcPayoutDecay;
+        remainingBTC -= btcPayout;
+        const btcRewards = Math.max(btcPayout / purchaseConversionRate, 0.000055);
+        app.usdRewards = btcPayout;
+        app.formattedUsdRewards = accounting.formatMoney(app.usdRewards);
+        app.btcRewards = btcRewards;
+        app.formattedBtcRewards = accounting.formatMoney(btcRewards);
+        app.payout = { BTC: btcRewards };
+        return app;
       });
       if (stxPayoutTotal) {
         let remainingSTX = stxPayoutTotal;

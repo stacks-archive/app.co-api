@@ -166,7 +166,7 @@ app.get('/api/app-mining-months', async (req, res) => {
     where: {
       status: 'published',
     },
-    include: MiningMonthlyReport.includeOptions,
+    include: [MiningMonthlyReport.includeOptions[0]],
     order: [['year', 'ASC'], ['month', 'ASC']],
   });
   months = await Promise.map(months, async (report) => {
