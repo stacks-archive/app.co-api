@@ -161,6 +161,7 @@ module.exports = (sequelize, DataTypes) => {
           apps[app.id] = apps[app.id] || app;
           apps[app.id].rankings = apps[app.id].rankings || [];
           apps[app.id].rankings.push(standardScore);
+          apps[app.id][`${report.reviewerName} Score`] = standardScore;
         });
       });
       const {
@@ -193,7 +194,7 @@ module.exports = (sequelize, DataTypes) => {
           lastReport.compositeRankings.forEach((previousApp) => {
             if (app.id === previousApp.id) {
               app.previousScore = previousApp.memoryRanking;
-              if (monthlyReport.year >= 2019 && monthlyReport.month >= 4) {
+              if (monthlyReport.year >= 2020 || (monthlyReport.year >= 2019 && monthlyReport.month >= 4)) {
                 app.memoryRanking = 0.25 * (app.previousScore || previousApp.averageRaning) + 0.75 * app.averageRanking;
               } else {
                 app.memoryRanking =
@@ -236,6 +237,7 @@ module.exports = (sequelize, DataTypes) => {
           domain: app.domain,
           averageRanking: app.averageRanking,
           rankings: app.rankings,
+          previousScore: app.previousScore,
         })),
       );
     });
