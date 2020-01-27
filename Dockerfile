@@ -14,9 +14,9 @@ RUN apk add --update --no-cache build-base \
     g++   \
     vips-dev
 RUN yarn install
-RUN apk del \
-  python \
-  py-pip
+# RUN apk del \
+#   python \
+#   py-pip
 #   make \
 #   g++ 
 COPY . .
