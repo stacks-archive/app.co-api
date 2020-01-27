@@ -13,11 +13,12 @@ RUN apk add --update --no-cache build-base \
     make   \
     g++   \
     vips-dev
-RUN yarn install && apk del \
+RUN yarn install
+RUN apk del \
   python \
   py-pip \
-  make \
-  g++ 
+#   make \
+#   g++ 
 COPY . .
 RUN yarn --production
 
