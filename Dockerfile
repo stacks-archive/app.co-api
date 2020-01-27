@@ -16,7 +16,7 @@ RUN apk add --update --no-cache build-base \
 RUN yarn install
 RUN apk del \
   python \
-  py-pip \
+  py-pip
 #   make \
 #   g++ 
 COPY . .
