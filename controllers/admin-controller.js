@@ -45,6 +45,7 @@ const updatableKeys = [
   'hasCollectedKYC',
   'hasAcceptedSECTerms',
   'hasAcceptedTerms',
+  'adminBlockstackID',
 ];
 
 router.post('/apps/:appId', async (req, res) => {

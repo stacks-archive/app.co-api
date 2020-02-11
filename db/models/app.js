@@ -54,6 +54,7 @@ module.exports = (sequelize, DataTypes) => {
       eversignDocumentID: DataTypes.STRING,
       jumioTransactionID: DataTypes.STRING,
       jumioEmbedURL: DataTypes.STRING,
+      adminBlockstackID: DataTypes.STRING,
       imageUrl: {
         type: DataTypes.STRING,
       },
@@ -197,6 +198,7 @@ module.exports = (sequelize, DataTypes) => {
       'eversignDocumentID',
       'jumioTransactionID',
       'jumioEmbedURL',
+      'adminBlockstackID',
     ];
 
     App.findAllWithRankings = (isAdmin = false) => {
