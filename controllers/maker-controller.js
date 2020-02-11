@@ -1,38 +1,49 @@
 const express = require('express');
 const _ = require('lodash');
+const jwt = require('express-jwt');
 const { App } = require('../db/models');
 const { makeDocument, getDocument } = require('../common/lib/eversign');
 const { createVerification } = require('../common/lib/jumio');
 
 const Router = express.Router();
 
+Router.use(jwt({ secret: process.env.JWT_SECRET }));
+
 Router.use(async (req, res, next) => {
   try {
-    const { accessToken } = req.query;
-    const app = await App.findOne({
-      where: { accessToken },
+    const { user } = req;
+    if (!user || !user.data.username) {
+      return res.status(400).json({ success: false });
+    }
+    const { username } = user.data;
+    const apps = await App.findAll({
+      where: { adminBlockstackID: username },
       attributes: {
         exclude: ['status', 'notes'],
       },
     });
-    if (app) {
+
+    if (req.query.appId) {
+      const app = apps.find((_app) => String(_app.id) === req.query.appId);
+      if (!app) {
+        return res.status(404).json({ success: false });
+      }
       req.app = app;
-      return next();
     }
-    return res.status(400).json({ success: false });
-    // return next();
+
+    req.apps = apps;
+    return next();
   } catch (error) {
     console.error(error);
-    // return next(error);
     return res.status(400).json({ success: false });
   }
 });
 
-Router.get('/app', (req, res) => res.json({ app: req.app }));
+Router.get('/apps', (req, res) => res.json({ app: req.apps[0], apps: req.apps }));
 
 const updateableKeys = ['BTCAddress', 'stacksAddress'];
 
-Router.post('/app', async (req, res) => {
+Router.post('/apps', async (req, res) => {
   try {
     const { app } = req;
     const data = _.pick(req.body, updateableKeys);
@@ -45,7 +56,7 @@ Router.post('/app', async (req, res) => {
   }
 });
 
-Router.post('/make-participation-agreement', async (req, res) => {
+Router.post('/apps/make-participation-agreement', async (req, res) => {
   try {
     const { app } = req;
     if (app.eversignDocumentID) {
@@ -62,7 +73,7 @@ Router.post('/make-participation-agreement', async (req, res) => {
   }
 });
 
-Router.post('/initiate-kyc', async (req, res) => {
+Router.post('/apps/initiate-kyc', async (req, res) => {
   try {
     const { app } = req;
     if (app.hasCollectedKYC) {

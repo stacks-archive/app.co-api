@@ -1,6 +1,7 @@
 const express = require('express');
 const { verifyAuthResponse } = require('blockstack/lib/auth/authVerification');
 const { decodeToken } = require('jsontokens');
+const jwt = require('express-jwt');
 const _ = require('lodash');
 const { subscribe } = require('mailigen');
 
@@ -9,10 +10,10 @@ const { createToken } = require('../common/lib/auth/token');
 const { sendMail, newAppEmail } = require('../common/lib/mailer');
 const GSheets = require('../common/lib/gsheets');
 const registerViralLoops = require('../common/lib/viral-loops');
-const { authenticationEnums } = require('../db/models/constants/app-constants');
-// const { subscribe } = require('../common/lib/mailigen');
 
 const router = express.Router();
+
+router.use(jwt({ secret: process.env.JWT_SECRET, credentialsRequired: false }));
 
 const prod = process.env.NODE_ENV === 'production';
 
@@ -40,6 +41,13 @@ router.post('/submit', async (req, res) => {
   const appData = _.pick(req.body, createableKeys);
   appData.status = 'pending_audit';
   console.log('Request to submit app:', appData);
+
+  if (req.user && req.user.data.username) {
+    const { username } = req.user.data;
+    console.log('Adding Blockstack ID to app', username);
+    appData.adminBlockstackID = username;
+  }
+
   try {
     if (appData.authentication === 'Blockstack' && appData.category !== 'Sample Blockstack Apps') {
       const gsheetsData = {
@@ -78,7 +86,16 @@ router.post('/submit', async (req, res) => {
     const app = await App.create({
       ...appData,
     });
-    sendMail(newAppEmail(app));
+    try {
+      await sendMail(newAppEmail(app));
+    } catch (error) {
+      if (!prod) {
+        console.warn('Unable to send email to admins for new app. Is maildev running?');
+      } else {
+        console.error('Error sending new app email to admins.');
+        console.error(error);
+      }
+    }
     const { refSource, referralCode } = req.body;
     if (referralCode) {
       try {
@@ -161,15 +178,59 @@ router.post('/authenticate', async (req, res) => {
   userAttrs.blockstackDID = payload.iss;
   await user.update(userAttrs);
   console.log(user.id);
-  const jwt = createToken(user);
+  const token = createToken(user);
 
-  return res.json({ success: true, token: jwt, user });
+  return res.json({ success: true, token, user });
 });
 
 router.post('/app-mining-submission', async (req, res) => {
   const submission = req.body;
   await GSheets.appendAppMiningSubmission(submission);
   res.json({ success: true });
+});
+
+router.get('/magic-link/:accessToken', async (req, res) => {
+  try {
+    const { accessToken } = req.params;
+    const app = await App.findOne({
+      where: { accessToken },
+      attributes: {
+        exclude: ['status', 'notes'],
+      },
+    });
+    if (!app) {
+      return res.status(404).json({ success: false });
+    }
+    return res.json({ app });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false });
+  }
+});
+
+router.post('/magic-link/:accessToken', async (req, res) => {
+  try {
+    const { accessToken } = req.params;
+    const app = await App.findOne({
+      where: { accessToken },
+    });
+    if (!app) {
+      return res.status(404).json({ success: false });
+    }
+    if (!req.user) {
+      return res.status(400).json({ success: false, message: 'You must be logged in to claim an app.' });
+    }
+    if (app.adminBlockstackID) {
+      return res.status(400).json({ success: false, message: 'This app has already been claimed.' });
+    }
+    await app.update({
+      adminBlockstackID: req.user.data.username,
+    });
+    return res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false });
+  }
 });
 
 module.exports = router;
