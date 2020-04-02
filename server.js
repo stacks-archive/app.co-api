@@ -52,6 +52,8 @@ app.use('/api/maker', MakerController);
 app.use('/api', UserController);
 app.use('/api', WebhooksController);
 
+app.use('/api/status', (req, res) => res.sendStatus(204));
+
 app.post('/api/fetch_rankings', async (req, res) => {
   if (process.env.API_KEY === req.query.key) {
     const apps = await App.findAll();
