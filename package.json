@@ -4,11 +4,13 @@
   "version": "1.0.0",
   "author": "The Blockstack Team",
   "bugs": {
-    "url": "https://github.com/blockstackpbc/app.co/issues"
+    "url": "https://github.com/blockstack/app.co-api/issues"
   },
   "dependencies": {
     "@babel/polyfill": "7.0.0-beta.44",
     "@babel/register": "7.0.0-beta.44",
+    "@commitlint/cli": "^9.1.1",
+    "@commitlint/config-conventional": "^9.1.1",
     "@google-cloud/storage": "^1.7.0",
     "@promster/express": "^3.2.0",
     "@promster/server": "^3.2.0",
@@ -71,13 +73,14 @@
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.7.0",
     "eslint-scope": "^3.7.1",
+    "husky": "^4.2.5",
     "jest": "^22.4.3",
     "prettier": "^1.12.1",
     "regenerator-runtime": "^0.11.1",
     "request": "^2.85.0",
     "sepia": "^2.0.2"
   },
-  "homepage": "https://github.com/blockstackpbc/app.co#readme",
+  "homepage": "https://github.com/blockstack/app.co-api#readme",
   "keywords": [
     "dapps"
   ],
@@ -85,7 +88,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/blockstackpbc/app.co.git"
+    "url": "git+ssh://git@github.com/blockstack/app.co-api.git"
   },
   "scripts": {
     "db:create": "sequelize db:create",
@@ -118,5 +121,32 @@
   },
   "engines": {
     "node": "^10.15"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github",
+      "@semantic-release/changelog",
+      "@semantic-release/git",
+      [
+        "semantic-release-slack-bot",
+        {
+          "notifyOnSuccess": true,
+          "notifyOnFail": true,
+          "markdownReleaseNotes": true
+        }
+      ]
+    ]
   }
 }
