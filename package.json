@@ -15,7 +15,7 @@
     "@promster/express": "^3.2.0",
     "@promster/server": "^3.2.0",
     "accounting": "^0.4.1",
-    "async": "^2.6.0",
+    "async": "^3.2.2",
     "blockstack": "^17.2.0",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
